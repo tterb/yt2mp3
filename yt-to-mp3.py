@@ -1,4 +1,3 @@
-from argparse import ArgumentParser
 from pydub import AudioSegment
 from time import sleep
 import sys, os, pafy
