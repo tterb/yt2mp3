@@ -1,13 +1,33 @@
+#!/usr/bin/env python3
+# yt-to-mp3.py
+
+import sys, os, pafy, argparse, configparser
 from pydub import AudioSegment
 from mutagen.easyid3 import EasyID3
-import sys, os, pafy, argparse
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
-  parser.add_argument('-i','--info', action="store_true", help='Add ID3 tags to the generated MP3 file')
-  parser.add_argument('url', help='The YouTube URL you want to convert')
+  parser.add_argument('-i','--info', action='store_true', help='Add ID3 tags to the generated MP3 file')
+  parser.add_argument('-c','--config', action='store_true', help='Configure application preferences')
+  parser.add_argument('url', help='YouTube URL you want to convert')
   args = parser.parse_args()
+
+  config = configparser.ConfigParser()
+  config.read('config.ini')
+  config.sections()
+  if args.config:
+    configure(config)
+    path = config['USER']['path']
+  elif not os.path.isfile('config.ini'):
+    config['DEFAULT'] = { 'path': os.environ['HOME']+'/Downloads/' }
+    with open('config.ini', 'w') as configfile:
+      config.write(configfile)
+  elif 'USER' in config.sections():
+    path = config['USER']['path']
+  else:
+    path = config['DEFAULT']['path']
   video = pafy.new(args.url)
+  sys.exit()
   ext = getAudio(video)
   # Convert to MP3
   convertMP3(video.title, ext)
@@ -16,9 +36,10 @@ def main():
   if args.info:
     d = getInfo(video.title)
     setID3(d)
-    os.rename(video.title+'.mp3', os.environ['HOME']+'/Downloads/'+d['title']+' - '+d['artist']+'.mp3')
+    os.rename(video.title+'.mp3', path+d['title']+' - '+d['artist']+'.mp3')
   else:
-    os.rename(video.title+'.mp3', os.environ['HOME']+'/Downloads/'+video.title+'.mp3')
+    os.rename(video.title+'.mp3', path+video.title+'.mp3')
+
 
 # Get best audio stream from video
 def getAudio(video):
@@ -70,9 +91,17 @@ def printProgressBar(size, recvd, ratio, rate, eta, prefix = '', suffix = '', to
   bar = fill * filledLength + '-' * (length - filledLength)
   prefix = float("%0.2f"%eta)
   print("\r %ss |%s| %s%% %s" % (prefix, bar, percent, suffix), end="\r")
-  if iteration == total: 
+  if iteration == total:
     print()
     print(u' \u2713 Complete')
+
+
+def configure(config):
+  config['DEFAULT'] = { 'path': os.environ['HOME']+'/Downloads/' }
+  config['USER'] = {}
+  config['USER']['path'] = input('Destination for downloads: ').replace('~', os.environ['HOME'])
+  with open('config.ini', 'w') as configfile:
+    config.write(configfile)
 
 
 if __name__ == '__main__':
