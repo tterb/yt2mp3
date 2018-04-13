@@ -27,7 +27,6 @@ def main():
   else:
     path = config['DEFAULT']['path']
   video = pafy.new(args.url)
-  sys.exit()
   ext = getAudio(video)
   # Convert to MP3
   convertMP3(video.title, ext)
@@ -62,7 +61,7 @@ def getInfo(vid_title):
   else:
     info = [vid_title]
   info = [i.strip('\'"').replace('_', ' ').title() for i in info]
-  for n in ['Title', 'Artist']:
+  for n in ['Artist', 'Title']:
     for j,i in enumerate(info):
       inp = input(f'{n}: {i}? (y/n) ')
       if inp.lower() in ['y', 'yes']:
