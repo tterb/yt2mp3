@@ -3,7 +3,7 @@
 <p align="right"><a href="https://www.python.org/downloads/release/python-360/"><img src="https://img.shields.io/badge/Python-3.6-blue.svg"/></a></p>  
 
 ## Description
-A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line. Additionally, utilizing the iTunes API to populate the output file metadata.  
+A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line. Additionally, the program also utilizes the iTunes API to populate the metadata of output files.  
 
 
 ## Install  
@@ -22,10 +22,13 @@ The resulting MP3 file will be saved to your *Downloads* directory, with the fol
 
 #### Options:  
 
-| Arguments    |                                                    |
-|:------------:|----------------------------------------------------|
-| -u, --url    | Allows the user to specify a Youtube URL           |
-| -h, --help   | Displays information on usage and functionality    |  
+| Arguments      |                                                    |
+|:--------------:|----------------------------------------------------|
+| `-t, --track`  | Specify the track name query                       |
+| `-a, --artist` | Specify the artist name query                      |
+| `-u, --url`    | Allows the user to specify a Youtube URL           |
+| `-h, --help`   | Displays information on usage and functionality    |  
+
 
 <br>  
 
