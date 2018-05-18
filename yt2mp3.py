@@ -26,12 +26,18 @@ ydl = youtube_dl.YoutubeDL({
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
+  parser.add_argument('-t','--track', default='', help='Specify the track name query')
+  parser.add_argument('-a','--artist', default='', help='Specify the artist name query')
   parser.add_argument('-u','--url', help='YouTube URL you want to convert')
   args = parser.parse_args()
   # Get song title/artist from user
   info = {}
-  info['title'] = input('Title: ')
-  info['artist'] = input('Artist: ')
+  if args.track or args.artist:
+    info['title'] = args.track
+    info['artist'] = args.artist
+  else:
+    info['title'] = input('Title: ')
+    info['artist'] = input('Artist: ')
   if args.url:
     path = download(args.url)
     try:
@@ -66,8 +72,7 @@ def main():
   
 def getSongData(track, artist):
   if track and artist:
-    songs = itunespy.search_track(track)
-    for song in songs:
+    for song in itunespy.search_track(track):
       if song.artist_name.lower() == artist.lower():
         return song
   elif artist:
@@ -79,8 +84,7 @@ def getSongData(track, artist):
     return songs
   elif track:
     return itunespy.search_track(track)
-  else:
-    return None
+  return
 
 # Displays an interactive menu of songs
 def showMenu(options):
