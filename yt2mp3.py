@@ -2,7 +2,6 @@
 # yt2mp3.py
 
 import sys, os, youtube_dl, itunespy, cursesmenu, argparse, urllib, requests, ssl, glob, shutil
-from pydub import AudioSegment
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TALB, TCON
 from mutagen.mp3 import MP3
@@ -30,13 +29,9 @@ def main():
   parser.add_argument('-u','--url', help='YouTube URL you want to convert')
   args = parser.parse_args()
   # Get song title/artist from user
-  # info = {}
-  # info['title'] = input('Title: ')
-  # info['artist'] = input('Artist: ')
-  info = {
-    'title': 'Stan',
-    'artist': 'Eminem'
-  }
+  info = {}
+  info['title'] = input('Title: ')
+  info['artist'] = input('Artist: ')
   if args.url:
     download(args.url)
     temp_path = glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
