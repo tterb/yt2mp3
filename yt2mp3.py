@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from pathlib import Path
+from pprint import pprint
 
 ydl = youtube_dl.YoutubeDL({
   'format': 'bestaudio/best', # get best audio
@@ -33,72 +34,57 @@ def main():
   info['title'] = input('Title: ')
   info['artist'] = input('Artist: ')
   if args.url:
-    download(args.url)
-    temp_path = glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
-    dir = str(Path.home()/'Downloads'/'Music')
-    if info['artist']:
-      dir = os.path.join(dir, info['artist'])
-      os.system('mkdir -p %s' % (dir.replace(' ', '_')))
-    # add song to artist directory
-    # path = os.path.join(dir, info['title']+'.mp3')
-    # os.system('mv %s %s' % (temp_path, path.replace(' ', '_')))
+    path = download(args.url)
     try:
-      song = getTrack(info['title'], info['artist'])
+      song = getSongData(info['title'], info['artist'])
       setData(path, song)
     except Exception as e:
       setID3(path, info)
       pass
   else:
-    if info['title']:
-      song = getTrack(info['title'], info['artist'])
-    elif info['artist']:
-      songs = getArtist(info['artist'])
-      selection = showMenu(songs)
+    if info['title'] and info['artist']:
+      song = getSongData(info['title'], info['artist'])
+    elif info['title'] or info['artist']:
+      songs = getSongData(info['title'], info['artist'])
+      if info['title']:
+        options = [str("%-30.25s %10.25s" % (s.track_name, s.artist_name)) for s in songs]
+      else:
+        options = [str(s.track_name) for s in songs]
+      selection = showMenu(options)
+      if selection >= len(songs):
+        sys.exit()
       song = songs[selection]
       info['title'] = song.track_name
+    if song:
+      url = getURL(song.track_name, song.artist_name)
+      path = download(url)
+      setData(path, song)
     else:
-      print("Sorry, no results were found.")
+      print('Sorry, no results were found.')
       sys.exit()
-    url = getURL(song.track_name, song.artist_name)
-    download(url)
-    path = glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
-    setData(path, song)
   setPath(path, info['title'], info['artist'])
 
-
-# Returns a single track object from the itunespy module.
-def getTrack(track, artist):
-  songs = itunespy.search_track(track)
-  for song in songs:
-    if song.artist_name.lower() == artist.lower():
-      return song
-
-# Returns a list of track objects all made by artist.
-def getArtist(artist):
-  songs = []
-  artists = itunespy.search_artist(artist)[0]
-  for album in artists.get_albums():
-    for song in album.get_tracks():
-      songs.append(song)
-  return songs
   
-# def getSong(track, artist):
-#   if track and artist:
-#     songs = itunespy.search_track(track)
-#     for song in songs:
-#       if song.artist_name.lower() == artist.lower():
-#         return song
-#   elif artist:
-#     songs = []
-#     artists = itunespy.search_artist(artist)[0]
-#     for album in artists.get_albums():
-#       for song in album.get_tracks():
-#         songs.append(song)
-#     return songs
+def getSongData(track, artist):
+  if track and artist:
+    songs = itunespy.search_track(track)
+    for song in songs:
+      if song.artist_name.lower() == artist.lower():
+        return song
+  elif artist:
+    songs = []
+    artists = itunespy.search_artist(artist)[0]
+    for album in artists.get_albums():
+      for song in album.get_tracks():
+        songs.append(song)
+    return songs
+  elif track:
+    return itunespy.search_track(track)
+  else:
+    return None
 
 # Displays an interactive menu of songs
-def showMenu(songs):
-  options = [str(s.track_name) for s in songs]
+def showMenu(options):
   menu = cursesmenu.SelectionMenu(options, title='Select an song')
   selection = menu.get_selection(options)
   return selection
@@ -120,6 +106,7 @@ def download(url):
   if len(url) <= 15:
     url = 'https://www.youtube.com/watch?v='+url
   ydl.download([url])
+  return glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
 
 # Sets the ID3 meta data of the MP3 file found at the end of path
 def setData(path, song):
@@ -148,7 +135,9 @@ def setData(path, song):
 # Sets the file path of song to: Music/[artist]/[track].mp3
 def setPath(path, track, artist):
   # make artist directory
-  dir = str(Path.home()/'Downloads'/'Music'/artist)
+  dir = str(Path.home()/'Downloads'/'Music')
+  if artist:
+    dir = os.path.join(dir, artist)
   os.system('mkdir -p %s' % (dir.replace(' ', '_')))
   # add song to artist directory
   new_path = os.path.join(dir,track+'.mp3')
