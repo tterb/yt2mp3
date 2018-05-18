@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from pathlib import Path
-from pprint import pprint
 
 ydl = youtube_dl.YoutubeDL({
   'format': 'bestaudio/best', # get best audio
