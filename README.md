@@ -1,36 +1,33 @@
 # YouTube to MP3
 
+<p align="right"><a href="https://www.python.org/downloads/release/python-360/"><img src="https://img.shields.io/badge/Python-3.6-blue.svg"/></a></p>  
+
 ## Description
-A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line.
+A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line. Additionally, utilizing the iTunes API to populate the output file metadata.  
 
-## Usage
-The program can be run using Python 3 as follows:
-```sh
-python yt-to-mp3.py <video-url>
-```
-The resulting MP3 file will be saved to your *Downloads* directory, by default.
 
-#### Options:
-
-| Arguments    |                                                    |
-|:------------:|----------------------------------------------------|
-| -i, --info   | Allows for the interactive setting of MP3 metadata |
-| -c, --config | Configure application preferences                  |
-| -h, --help   | Displays information on usage and functionality    |
-
-## Dependencies
-The following dependencies must be installed to utilize the program:
-  * [**Python 3**](https://www.python.org/download/releases/3.0/)
-  * [**pafy**](https://github.com/mps-youtube/pafy)
-  * [**pydub**](https://github.com/jiaaro/pydub)
-  * [**mutagen**](https://github.com/quodlibet/mutagen)
-
-Additionally, if you have Python 3 installed, you can install all dependencies with the following command:
+## Install  
+If Python 3 is installed, you can install the program dependencies with the following command:  
 
 ```sh
 pip install -r requirements.txt
 ```
 
+## Usage  
+The program can executed via Python 3 as follows:  
+```sh
+python yt2mp3.py [-options]
+```
+The resulting MP3 file will be saved to your *Downloads* directory, with the following file structure `Music/{artist}/{track}.mp3`.  
+
+#### Options:  
+
+| Arguments    |                                                    |
+|:------------:|----------------------------------------------------|
+| -u, --url    | Allows the user to specify a Youtube URL           |
+| -h, --help   | Displays information on usage and functionality    |  
+
+<br>  
 
 ----
 
