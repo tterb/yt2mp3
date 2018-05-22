@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # yt2mp3.py
 
-import sys, os, youtube_dl, itunespy, cursesmenu, argparse, urllib, requests, ssl, glob, shutil
-from mutagen.easyid3 import EasyID3
-from mutagen.id3 import ID3, APIC, TIT2, TPE1, TALB, TCON
+import sys, os, youtube_dl, itunespy, argparse, urllib, requests, ssl, glob, shutil, cursesmenu
 from mutagen.mp3 import MP3
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
 from urllib.request import Request, urlopen
-from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from pathlib import Path
+from bs4 import BeautifulSoup
 
 ydl = youtube_dl.YoutubeDL({
-  'format': 'bestaudio/best', # get best audio
-  'outtmpl': os.path.join(os.environ['HOME'],'Downloads','YDL', '%(id)s.%(ext)s'), # sets output template
-  'nocheckcertificate': True, # bypasses certificate check
-  'noplaylist' : True, # won't download playlists
-  'quiet': True, #suppress messages in command line
+  'format': 'bestaudio/best',  # get best audio
+  'outtmpl': os.path.join(os.environ['HOME'],'Downloads','YDL', '%(id)s.%(ext)s'),           # sets output template
+  'nocheckcertificate': True,  # bypasses certificate check
+  'noplaylist' : True,         # won't download playlists
+  'quiet': True,               # suppress messages in command line
   'postprocessors': [{
       'key': 'FFmpegExtractAudio',
       'preferredcodec': 'mp3',
@@ -117,8 +117,12 @@ def setData(path, song):
   data.delete()
   data.add(TIT2(encoding=3, text=song.track_name))
   data.add(TPE1(encoding=3, text=song.artist_name))
+  data.add(TPE2(encoding=3, text=song.artist_name))
   data.add(TALB(encoding=3, text=song.collection_name))
   data.add(TCON(encoding=3, text=song.primary_genre_name))
+  data.add(TRCK(encoding=3, text=str(song.track_number)+'/'+str(song.track_count)))
+  data.add(TPOS(encoding=3, text=str(song.disc_number)+'/'+str(song.disc_count)))
+  data.add(TDRC(encoding=3, text=song.release_date[0:4]))
   data.save()
   # Embed cover-art in ID3 metadata
   data = MP3(path, ID3=ID3)
@@ -129,9 +133,8 @@ def setData(path, song):
   response = requests.get(imgURL)
   img = Image.open(BytesIO(response.content))
   img.save(imgPath)
-  data.tags.add(APIC(encoding=3, mime="image/jpg",
-                        type=3, desc=u"Cover",
-                        data=open(imgPath, "rb").read()))
+  data.tags.add(APIC(encoding=3, mime="image/jpg", type=3, 
+                     desc=u"Cover", data=open(imgPath, "rb").read()))
   data.save()
   shutil.rmtree(dir)
 
