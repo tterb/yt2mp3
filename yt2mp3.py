@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # yt2mp3.py
 
+from __future__ import unicode_literals
 import sys, os, youtube_dl, itunespy, argparse, urllib, requests, ssl, glob, shutil, cursesmenu
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
@@ -11,18 +12,6 @@ from io import BytesIO
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-ydl = youtube_dl.YoutubeDL({
-  'format': 'bestaudio/best',  # get best audio
-  'outtmpl': os.path.join(os.environ['HOME'],'Downloads','YDL', '%(id)s.%(ext)s'),           # sets output template
-  'nocheckcertificate': True,  # bypasses certificate check
-  'noplaylist' : True,         # won't download playlists
-  'quiet': True,               # suppress messages in command line
-  'postprocessors': [{
-      'key': 'FFmpegExtractAudio',
-      'preferredcodec': 'mp3',
-      'preferredquality': '192',
-  }]
-})
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
@@ -106,9 +95,22 @@ def getURL(track, artist):
 
 # Downloads songs from youtube, songs must be a list of track objects
 def download(url):
+  tempDir = os.path.join(Path.home(),'Downloads','YDL', '%(id)s.%(ext)s')
+  ydl = youtube_dl.YoutubeDL({
+    'format': 'bestaudio/best',  # get best audio
+    'outtmpl': tempDir,          # sets output template
+    'nocheckcertificate': True,  # bypasses certificate check
+    'noplaylist' : True,         # won't download playlists
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+  })
   if len(url) <= 15:
     url = 'https://www.youtube.com/watch?v='+url
   ydl.download([url])
+  print(u' \u2713 Download Complete')
   return glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
 
 # Sets the ID3 meta data of the MP3 file found at the end of path
