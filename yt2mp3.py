@@ -75,6 +75,8 @@ def getSongData(track, artist):
     for song in itunespy.search_track(track):
       if song.artist_name.lower() == artist.lower():
         return song
+  elif track:
+    return itunespy.search_track(track)
   elif artist:
     songs = []
     artists = itunespy.search_artist(artist)[0]
@@ -82,8 +84,6 @@ def getSongData(track, artist):
       for song in album.get_tracks():
         songs.append(song)
     return songs
-  elif track:
-    return itunespy.search_track(track)
   return
 
 # Displays an interactive menu of songs
@@ -97,12 +97,12 @@ def getURL(track, artist):
   query = urllib.parse.quote(track+" "+artist)
   url = "https://www.youtube.com/results?search_query=" + query
   req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  resp = urlopen(req, context=ssl._create_unverified_context())
-  soup = BeautifulSoup(resp.read(), 'lxml')
-  search_results = []
+  response = urlopen(req, context=ssl._create_unverified_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  results = []
   for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
-    search_results.append('https://www.youtube.com' + vid['href'])
-  return search_results[0]
+    results.append('https://www.youtube.com' + vid['href'])
+  return results[0]
 
 # Downloads songs from youtube, songs must be a list of track objects
 def download(url):
@@ -113,26 +113,26 @@ def download(url):
 
 # Sets the ID3 meta data of the MP3 file found at the end of path
 def setData(path, song):
-  new_song = ID3(path)
-  new_song.delete()
-  new_song.add(TIT2(encoding=3, text=song.track_name))
-  new_song.add(TPE1(encoding=3, text=song.artist_name))
-  new_song.add(TALB(encoding=3, text=song.collection_name))
-  new_song.add(TCON(encoding=3, text=song.primary_genre_name))
-  new_song.save()
+  data = ID3(path)
+  data.delete()
+  data.add(TIT2(encoding=3, text=song.track_name))
+  data.add(TPE1(encoding=3, text=song.artist_name))
+  data.add(TALB(encoding=3, text=song.collection_name))
+  data.add(TCON(encoding=3, text=song.primary_genre_name))
+  data.save()
   # Embed cover-art in ID3 metadata
-  new_song = MP3(path, ID3=ID3)
-  img_url = song.artwork_url_100
+  data = MP3(path, ID3=ID3)
+  imgURL = song.artwork_url_100
   dir = str(Path.home()/'Downloads'/'CoverArt')
   os.system('mkdir -p %s' % (dir))
-  img_path = os.path.join(dir,song.collection_name+'.jpg')
-  img_response = requests.get(img_url)
-  img = Image.open(BytesIO(img_response.content))
-  img.save(img_path)
-  new_song.tags.add(APIC(encoding=3, mime="image/jpg",
+  imgPath = os.path.join(dir,song.collection_name+'.jpg')
+  response = requests.get(imgURL)
+  img = Image.open(BytesIO(response.content))
+  img.save(imgPath)
+  data.tags.add(APIC(encoding=3, mime="image/jpg",
                         type=3, desc=u"Cover",
-                        data=open(img_path, "rb").read()))
-  new_song.save()
+                        data=open(imgPath, "rb").read()))
+  data.save()
   shutil.rmtree(dir)
 
 # Sets the file path of song to: Music/[artist]/[track].mp3
@@ -143,8 +143,8 @@ def setPath(path, track, artist):
     dir = os.path.join(dir, artist)
   os.system('mkdir -p %s' % (dir.replace(' ', '_')))
   # add song to artist directory
-  new_path = os.path.join(dir,track+'.mp3')
-  os.system('mv %s %s' % (path, new_path.replace(' ', '_')))
+  newPath = os.path.join(dir,track+'.mp3')
+  os.system('mv %s %s' % (path, newPath.replace(' ', '_')))
   shutil.rmtree(Path.home()/'Downloads'/'YDL')
   
 # Set MP3 ID3 tags
