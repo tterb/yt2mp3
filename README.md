@@ -1,10 +1,13 @@
 # YouTube to MP3
 
-<p align="right"><a href="https://www.python.org/downloads/release/python-360/"><img src="https://img.shields.io/badge/Python-3.6-blue.svg"/></a></p>  
+<p align="right">
+<a href="https://github.com/tterb/YouTube-to-MP3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/tterb/YouTube-to-MP3.svg" alt="License"/></a>
+<a href="https://www.python.org/downloads/release/python-360/"><img src="https://img.shields.io/badge/Python-3.6-blue.svg" alt="Python version"/></a>
+</p>  
 
 ## Description  
 A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
-Once the file is downloaded the program will also attempt to embed the output file with the appropriate metadata and cover art via the iTunes API.  
+Once the file is downloaded the program will also attempt to embed the output file with the appropriate metadata and cover art via the [iTunes API](https://github.com/spaceisstrange/itunespy).  
 
 
 ## Install  
@@ -31,13 +34,16 @@ The resulting MP3 file will be saved to your *Downloads* directory, with the fol
 
 #### Options:  
 
-| Arguments      |                                                    |
-|:--------------:|----------------------------------------------------|
-| `-t, --track`  | Specify the track name query                       |
-| `-a, --artist` | Specify the artist name query                      |
-| `-u, --url`    | Specify a Youtube URL or ID                        |
-| `-h, --help`   | Displays information on usage and functionality    |  
+| Arguments        |                                                    |
+|:----------------:|----------------------------------------------------|
+| `-t, --track`    | Specify the track name query                       |
+| `-a, --artist`   | Specify the artist name query                      |
+| `-u, --url`      | Specify a Youtube URL or ID                        |
+| `-q, --quiet`    | Suppress program command-line output               |
+| `-p, --progress` | Display a command-line progress bar                |
+| `-h, --help`     | Displays information on usage and functionality    |  
 
+***Note:*** Displaying the progress bar currently has a significant impact on download performance, due to [#180](https://github.com/nficano/pytube/issues/180).
 
 <br>  
 
