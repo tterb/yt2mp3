@@ -1,7 +1,8 @@
-youtube_dl==2018.3.20
+pydub==0.21.0
 mutagen==1.40.0
 curses_menu==0.5.0
-itunespy==1.5.5
 requests==2.18.4
+itunespy==1.5.5
+pytube==9.2.2
 Pillow==5.1.0
 beautifulsoup4==4.6.0
