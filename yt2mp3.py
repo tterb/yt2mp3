@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # yt2mp3.py
 
-from __future__ import unicode_literals
-import sys, os, youtube_dl, itunespy, argparse, urllib, requests, ssl, glob, shutil, cursesmenu
+import sys, os, itunespy, argparse, urllib, requests, ssl, glob, shutil, cursesmenu
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
@@ -11,6 +10,8 @@ from PIL import Image
 from io import BytesIO
 from pathlib import Path
 from bs4 import BeautifulSoup
+from pytube import YouTube
+from pydub import AudioSegment
 
 
 def main():
@@ -19,28 +20,28 @@ def main():
   parser.add_argument('-a','--artist', default='', help='Specify the artist name query')
   parser.add_argument('-u','--url', help='YouTube URL you want to convert')
   args = parser.parse_args()
-  # Get song title/artist from user
+  # Get song track/artist from user
   info = {}
   if args.track or args.artist:
-    info['title'] = args.track
+    info['track'] = args.track
     info['artist'] = args.artist
   else:
-    info['title'] = input('Title: ')
+    info['track'] = input('Track: ')
     info['artist'] = input('Artist: ')
   if args.url:
     path = download(args.url)
     try:
-      song = getSongData(info['title'], info['artist'])
+      song = getSongData(info['track'], info['artist'])
       setData(path, song)
     except Exception as e:
       setID3(path, info)
       pass
   else:
-    if info['title'] and info['artist']:
-      song = getSongData(info['title'], info['artist'])
-    elif info['title'] or info['artist']:
-      songs = getSongData(info['title'], info['artist'])
-      if info['title']:
+    if info['track'] and info['artist']:
+      song = getSongData(info['track'], info['artist'])
+    elif info['track'] or info['artist']:
+      songs = getSongData(info['track'], info['artist'])
+      if info['track']:
         options = [str("%-30.25s %10.25s" % (s.track_name, s.artist_name)) for s in songs]
       else:
         options = [str(s.track_name) for s in songs]
@@ -48,15 +49,16 @@ def main():
       if selection >= len(songs):
         sys.exit()
       song = songs[selection]
-      info['title'] = song.track_name
+      info['track'] = song.track_name
     if song:
       url = getURL(song.track_name, song.artist_name)
-      path = download(url)
+      tempPath = download(url)
+      path = convertToMP3(tempPath, song)
       setData(path, song)
     else:
       print('Sorry, no results were found.')
       sys.exit()
-  setPath(path, info['title'], info['artist'])
+  # setPath(path, info['track'], info['artist'])
 
   
 def getSongData(track, artist):
@@ -95,23 +97,27 @@ def getURL(track, artist):
 
 # Downloads songs from youtube, songs must be a list of track objects
 def download(url):
-  tempDir = os.path.join(Path.home(),'Downloads','YDL', '%(id)s.%(ext)s')
-  ydl = youtube_dl.YoutubeDL({
-    'format': 'bestaudio/best',  # get best audio
-    'outtmpl': tempDir,          # sets output template
-    'nocheckcertificate': True,  # bypasses certificate check
-    'noplaylist' : True,         # won't download playlists
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
-    }],
-  })
+  tempDir = os.path.join(Path.home(),'Downloads','YDL')
+  id = url.split('=')[-1]
+  if not os.path.exists(tempDir):
+    os.makedirs(tempDir)
   if len(url) <= 15:
     url = 'https://www.youtube.com/watch?v='+url
-  ydl.download([url])
+  # ydl.download(url)
+  yt = YouTube(url)
+  yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
   print(u' \u2713 Download Complete')
-  return glob.glob(str(Path.home()/'Downloads'/'YDL')+'/*.mp3')[0]
+  return glob.glob(str(Path.home()/'Downloads'/'YDL')+'/'+id+'.*')[0]
+
+# def convertToMP3(stream, file_handle):
+def convertToMP3(tempPath, song):
+  print(u' \u266b Converting to MP3')
+  outputDir = Path.home()/'Downloads'/'Music'/song.artist_name
+  if not os.path.exists(outputDir):
+    os.makedirs(outputDir)
+  AudioSegment.from_file(tempPath).export(os.path.join(outputDir,song.track_name+'.mp3'), format="mp3")
+  shutil.rmtree(Path.home()/'Downloads'/'YDL')
+  return os.path.join(outputDir,song.track_name+'.mp3')
 
 # Sets the ID3 meta data of the MP3 file found at the end of path
 def setData(path, song):
@@ -155,9 +161,10 @@ def setPath(path, track, artist):
 # Set MP3 ID3 tags
 def setID3(path, info):
   song = EasyID3(path)
-  song['title'] = info['title']
+  song['track'] = info['track']
   song['artist'] = info['artist']
   song.save()  
+
 
 
 if __name__ == '__main__':
