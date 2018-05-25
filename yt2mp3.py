@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 # yt2mp3.py
 
-import sys, os, itunespy, argparse, urllib, requests, ssl, glob, shutil, cursesmenu, logging
+import sys, os, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
 from urllib.request import Request, urlopen
 from PIL import Image
-from io import BytesIO
 from pathlib import Path
 from bs4 import BeautifulSoup
-from pytube import YouTube
-from pydub import AudioSegment
+from collections import defaultdict
 
 
 def main():
@@ -19,64 +17,67 @@ def main():
   parser.add_argument('-t','--track', default='', help='Specify the track name query')
   parser.add_argument('-a','--artist', default='', help='Specify the artist name query')
   parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
-  parser.add_argument('-p','--progress', help='Display a command-line progress bar', action="store_true")
-  parser.add_argument('-q','--quiet', help='Suppress command-line output', action="store_true")
+  parser.add_argument('-p','--progress', help='Display a command-line progress bar', action='store_true')
+  parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
   args = parser.parse_args()
-  logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format="%(message)s")
+  logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
   # Get song track/artist from user
-  info = {}
+  data = defaultdict(str)
   if args.track or args.artist:
-    info['track'] = args.track
-    info['artist'] = args.artist
+    data['track_name'] = args.track
+    data['artist_name'] = args.artist
   else:
-    info['track'] = input('Track: ')
-    info['artist'] = input('Artist: ')
+    data['track_name'] = input(' Track: ')
+    data['artist_name'] = input(' Artist: ')
   if args.url:
-    path = download(args.url, args.progress)
-    try:
-      song = getSongData(info['track'], info['artist'])
-      setData(path, song)
-    except Exception as e:
-      setID3(path, info)
-      pass
+    data['video_url'] = args.url
+    if len(args.url) <= 12:
+      data['video_url'] = 'https://www.youtube.com/watch?v='+args.url
+    res = getSongData(data['track_name'], data['artist_name'])
+    if res:
+      song = Song(defaultdict(str, res.__dict__))
+    else:
+      id = data['video_url'].split('=')[-1]
+      data['artwork_url_100'] = 'https://img.youtube.com/vi/'+id+'/maxresdefault.jpg'
+      song = Song(data)
   else:
-    if info['track'] and info['artist']:
-      song = getSongData(info['track'], info['artist'])
-    elif info['track'] or info['artist']:
-      songs = getSongData(info['track'], info['artist'])
-      if info['track']:
-        options = [str("%-30.25s %10.25s" % (s.track_name, s.artist_name)) for s in songs]
+    if data['track_name'] and data['artist_name']:
+      res = getSongData(data['track_name'], data['artist_name'])
+    elif data['track_name'] or data['artist_name']:
+      songs = getSongData(data['track_name'], data['artist_name'])
+      if data['track_name']:
+        options = [str('%-30.25s %10.25s' % (s.track_name, s.artist_name)) for s in songs]
       else:
         options = [str(s.track_name) for s in songs]
-      selection = showMenu(options)
-      if selection >= len(songs):
+      select = showMenu(options)
+      if select >= len(songs):
         sys.exit()
-      song = songs[selection]
-      info['track'] = song.track_name
-    if song:
-      url = getURL(song.track_name, song.artist_name)
-      tempPath = download(url, args.progress)
-      path = convertToMP3(tempPath, song)
-      setData(path, song)
+      res = songs[select]
+    if res:
+      data = defaultdict(str, res.__dict__)
+      data['video_url'] = getURL(data['track_name'], data['artist_name'])
+      song = Song(data)
     else:
       logging.warning('Sorry, no results were found.')
       sys.exit()
-  # setPath(path, info['track'], info['artist'])
-
-  
+  tempPath = download(song.video_url, args.progress)
+  path = convertToMP3(tempPath, song)
+  setData(path, song)
+    
+# Get song data from iTunes API
 def getSongData(track, artist):
   if track and artist:
-    for song in itunespy.search_track(track):
-      if song.artist_name.lower() == artist.lower():
-        return song
+    for s in itunespy.search_track(track):
+      if s.artist_name.lower() == artist.lower():
+        return s
   elif track:
     return itunespy.search_track(track)
   elif artist:
     songs = []
     artists = itunespy.search_artist(artist)[0]
     for album in artists.get_albums():
-      for song in album.get_tracks():
-        songs.append(song)
+      for s in album.get_tracks():
+        songs.append(s)
     return songs
   return
 
@@ -89,7 +90,7 @@ def showMenu(options):
 # Scrapes youtube for a video that has track and artist in the name
 def getURL(track, artist):
   query = urllib.parse.quote(track+" "+artist)
-  url = "https://www.youtube.com/results?search_query=" + query
+  url = 'https://www.youtube.com/results?search_query=' + query
   req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
   response = urlopen(req, context=ssl._create_unverified_context())
   soup = BeautifulSoup(response.read(), 'lxml')
@@ -100,84 +101,88 @@ def getURL(track, artist):
 
 # Downloads songs from youtube, songs must be a list of track objects
 def download(url, progressBar=False):
-  tempDir = os.path.join(Path.home(),'Downloads','temp')
-  id = url.split('=')[-1]
+  tempDir = Path.home()/'Downloads'/'Music'/'temp'
   if not os.path.exists(tempDir):
     os.makedirs(tempDir)
-  if len(url) <= 15:
-    url = 'https://www.youtube.com/watch?v='+url
-  yt = YouTube(url)
+  id = url.split('=')[-1]
+  yt = pytube.YouTube(url)
   if progressBar:
+    logging.info(' Downloading...')
     yt.register_on_progress_callback(showProgressBar)
-  logging.info(' Downloading...')
   yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
-  logging.info(u'\r \u2713 Download Complete')
-  return glob.glob(str(Path.home()/'Downloads'/'temp')+'/'+id+'.*')[0]
+  logging.info(' ✔ Download Complete')
+  return glob.glob(os.path.join(str(tempDir),id+'.*'))[0]
 
 # Convert the downloaded video file to MP3
 def convertToMP3(tempPath, song):
-  logging.info(u' \u266b Converting to MP3')
-  outputDir = Path.home()/'Downloads'/'Music'/song.artist_name
+  logging.info(' ♬ Converting to MP3')
+  outputDir = Path.home()/'Downloads'/'Music'/song.artist
   if not os.path.exists(outputDir):
     os.makedirs(outputDir)
-  AudioSegment.from_file(tempPath).export(os.path.join(outputDir,song.track_name+'.mp3'), format="mp3")
-  shutil.rmtree(Path.home()/'Downloads'/'temp')
-  return os.path.join(outputDir,song.track_name+'.mp3')
+  path = os.path.join(outputDir,song.track+'.mp3')
+  pydub.AudioSegment.from_file(tempPath).export(path, format='mp3')
+  shutil.rmtree(Path(tempPath).parent)
+  return path
 
-# Sets the ID3 meta data of the MP3 file found at the end of path
+# Sets the ID3 metadata of the MP3 file
 def setData(path, song):
-  data = ID3(path)
-  data.delete()
-  data.add(TIT2(encoding=3, text=song.track_name))
-  data.add(TPE1(encoding=3, text=song.artist_name))
-  data.add(TPE2(encoding=3, text=song.artist_name))
-  data.add(TALB(encoding=3, text=song.collection_name))
-  data.add(TCON(encoding=3, text=song.primary_genre_name))
-  data.add(TRCK(encoding=3, text=str(song.track_number)+'/'+str(song.track_count)))
-  data.add(TPOS(encoding=3, text=str(song.disc_number)+'/'+str(song.disc_count)))
-  data.add(TDRC(encoding=3, text=song.release_date[0:4]))
-  data.save()
+  meta = ID3(path)
+  meta.delete()
+  meta.add(TIT2(encoding=3, text=song.track))
+  meta.add(TPE1(encoding=3, text=song.artist))
+  meta.add(TPE2(encoding=3, text=song.artist))
+  meta.add(TALB(encoding=3, text=song.album))
+  meta.add(TCON(encoding=3, text=song.genre))
+  meta.add(TRCK(encoding=3, text=song.track_number+'/'+song.track_count))
+  meta.add(TPOS(encoding=3, text=song.disc_number+'/'+song.disc_count))
+  meta.add(TDRC(encoding=3, text=song.release_date[0:4]))
+  meta.save()
   # Embed cover-art in ID3 metadata
-  data = MP3(path, ID3=ID3)
-  imgURL = song.artwork_url_100
-  dir = str(Path.home()/'Downloads'/'CoverArt')
+  meta = MP3(path, ID3=ID3)
+  imgURL = song.artwork_url
+  dir = Path.home()/'Downloads'/'Music'/'CoverArt'
   os.system('mkdir -p %s' % (dir))
-  imgPath = os.path.join(dir,song.collection_name+'.jpg')
+  imgPath = os.path.join(dir,'cover.jpg')
   response = requests.get(imgURL)
-  img = Image.open(BytesIO(response.content))
+  img = Image.open(io.BytesIO(response.content))
   img.save(imgPath)
-  data.tags.add(APIC(encoding=3, mime="image/jpg", type=3, 
-                     desc=u"Cover", data=open(imgPath, "rb").read()))
-  data.save()
+  meta.tags.add(APIC(encoding=3, mime='image/jpg', type=3, 
+                     desc=u'Cover', data=open(imgPath,'rb').read()))
+  meta.save()
   shutil.rmtree(dir)
 
-# Sets the file path of song to: Music/[artist]/[track].mp3
-def setPath(path, track, artist):
-  # make artist directory
-  dir = str(Path.home()/'Downloads'/'Music')
-  if artist:
-    dir = os.path.join(dir, artist)
-  os.system('mkdir -p %s' % (dir.replace(' ', '_')))
-  # add song to artist directory
-  newPath = os.path.join(dir,track+'.mp3')
-  os.system('mv %s %s' % (path, newPath.replace(' ', '_')))
-  shutil.rmtree(Path.home()/'Downloads'/'temp')
-  
-# Set MP3 ID3 tags
-def setID3(path, info):
-  song = EasyID3(path)
-  song['track'] = info['track']
-  song['artist'] = info['artist']
-  song.save()  
-
+# Display a download progress bar
 def showProgressBar(stream, chunk, file_handle, bytes_remaining):
   total = stream.filesize
   iter = ((total-bytes_remaining)/total)
-  percent = ("{0:.1f}").format(iter*100)
+  percent = ('{0:.1f}').format(iter*100)
   progress = int(50*iter)
   bar = '█' * progress + '-' * (50 - progress)
   sys.stdout.write(' ↳ |{bar}| {percent}%\r'.format(bar=bar, percent=percent))
   sys.stdout.flush()
+
+
+class Song(object):
+  
+  def __init__(self, data):  
+    self.track = data['track_name']
+    self.artist = data['artist_name']
+    self.video_url = data['video_url']
+    self.album = data['collection_name']
+    self.genre = data['primary_genre_name']
+    self.artwork_url = data['artwork_url_100']
+    self.track_number = str(data['track_number'])
+    self.track_count = str(data['track_count'])
+    self.disc_count = str(data['disc_count'])
+    self.disc_number = str(data['disc_number'])
+    self.release_date = data['release_date']
+    
+  def __repr__(self):
+    string = ''
+    for key, value in self.__dict__.items():
+      if not key.startswith('__'):
+        string += '\n' + key + ': ' + str(value)
+    return string
 
 
 if __name__ == '__main__':
