@@ -6,10 +6,10 @@ from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
 from urllib.request import Request, urlopen
+from collections import defaultdict
 from PIL import Image
 from pathlib import Path
 from bs4 import BeautifulSoup
-from collections import defaultdict
 
 
 def main():
@@ -46,9 +46,9 @@ def main():
     elif data['track_name'] or data['artist_name']:
       songs = getSongData(data['track_name'], data['artist_name'])
       if data['track_name']:
-        options = [str('%-30.25s %10.25s' % (s.track_name, s.artist_name)) for s in songs]
+        options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
       else:
-        options = [str(s.track_name) for s in songs]
+        options = [s.track_name for s in songs]
       select = showMenu(options)
       if select >= len(songs):
         sys.exit()
@@ -111,7 +111,7 @@ def download(url, progressBar=False):
     yt.register_on_progress_callback(showProgressBar)
   yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
   logging.info(' ✔ Download Complete')
-  return glob.glob(os.path.join(str(tempDir),id+'.*'))[0]
+  return glob.glob(os.path.join(str(tempDir), id+'.*'))[0]
 
 # Convert the downloaded video file to MP3
 def convertToMP3(tempPath, song):
@@ -163,7 +163,6 @@ def showProgressBar(stream, chunk, file_handle, bytes_remaining):
 
 
 class Song(object):
-  
   def __init__(self, data):  
     self.track = data['track_name']
     self.artist = data['artist_name']
@@ -176,13 +175,6 @@ class Song(object):
     self.disc_count = str(data['disc_count'])
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
-    
-  def __repr__(self):
-    string = ''
-    for key, value in self.__dict__.items():
-      if not key.startswith('__'):
-        string += '\n' + key + ': ' + str(value)
-    return string
 
 
 if __name__ == '__main__':
