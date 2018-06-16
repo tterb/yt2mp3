@@ -66,20 +66,24 @@ def main():
     
 # Get song data from iTunes API
 def getSongData(track, artist):
-  if track and artist:
-    for s in itunespy.search_track(track):
-      if s.artist_name.lower() == artist.lower():
-        return s
-  elif track:
-    return itunespy.search_track(track)
-  elif artist:
-    songs = []
-    artists = itunespy.search_artist(artist)[0]
-    for album in artists.get_albums():
-      for s in album.get_tracks():
-        songs.append(s)
-    return songs
-  return
+  try:
+    if track and artist:
+      for s in itunespy.search_track(track):
+        if s.artist_name.lower() == artist.lower():
+          return s
+    elif track:
+      return itunespy.search_track(track)
+    elif artist:
+      songs = []
+      artists = itunespy.search_artist(artist)[0]
+      for album in artists.get_albums():
+        for s in album.get_tracks():
+          songs.append(s)
+      return songs
+    return
+  except LookupError as e:
+    logging.warning(str(e))
+    sys.exit()
 
 # Displays an interactive menu of songs
 def showMenu(options):
