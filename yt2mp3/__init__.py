@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-# yt2mp3.py
 
-import sys, os, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging
+import sys, os, re, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
@@ -14,8 +13,8 @@ from bs4 import BeautifulSoup
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
-  parser.add_argument('-t','--track', default='', help='Specify the track name query')
-  parser.add_argument('-a','--artist', default='', help='Specify the artist name query')
+  parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
+  parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
   parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
   parser.add_argument('-p','--progress', help='Display a command-line progress bar', action='store_true')
   parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
@@ -23,49 +22,48 @@ def main():
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
   # Get song track/artist from user
   data = defaultdict(str)
-  if args.track or args.artist:
-    data['track_name'] = args.track
-    data['artist_name'] = args.artist
-  else:
-    data['track_name'] = input(' Track: ')
-    data['artist_name'] = input(' Artist: ')
   if args.url:
-    data['video_url'] = args.url
-    if len(args.url) <= 12:
-      data['video_url'] = 'https://www.youtube.com/watch?v='+args.url
-    res = getSongData(data['track_name'], data['artist_name'])
-    if res:
-      song = Song(defaultdict(str, res.__dict__))
-    else:
-      id = data['video_url'].split('=')[-1]
-      data['artwork_url_100'] = 'https://img.youtube.com/vi/'+id+'/maxresdefault.jpg'
-      song = Song(data)
+    url = args.url
+    if len(url) <= 12:
+      url = 'https://www.youtube.com/watch?v='+url
+    result = getVideoData(url)
+    if not result:
+      data['track_name'] = input(' Track: ')
+      data['artist_name'] = input(' Artist: ')
+      result = getSongData(data['track_name'], data['artist_name'], False)
+      if not result:
+        data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
   else:
+    if args.track or args.artist:
+      data['track_name'] = ' '.join(args.track)
+      data['artist_name'] = ' '.join(args.artist)
+    else:
+      data['track_name'] = input(' Track: ')
+      data['artist_name'] = input(' Artist: ')
     if data['track_name'] and data['artist_name']:
-      res = getSongData(data['track_name'], data['artist_name'])
+      result = getSongData(data['track_name'], data['artist_name'])
     elif data['track_name'] or data['artist_name']:
       songs = getSongData(data['track_name'], data['artist_name'])
       if data['track_name']:
         options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
-      else:
+      elif data['artist_name']:
         options = [s.track_name for s in songs]
-      select = showMenu(options)
-      if select >= len(songs):
-        sys.exit()
-      res = songs[select]
-    if res:
-      data = defaultdict(str, res.__dict__)
-      data['video_url'] = getURL(data['track_name'], data['artist_name'])
-      song = Song(data)
-    else:
+      result = songs[showMenu(options)]
+    if not data['track_name'] and not data['artist_name'] or not result:
       logging.warning('Sorry, no results were found.')
       sys.exit()
+    url = getURL(data['track_name'], data['artist_name'])
+  if result:
+    data = defaultdict(str, result.__dict__)
+  data['video_url'] = url
+  song = Song(data)
   tempPath = download(song.video_url, args.progress)
   path = convertToMP3(tempPath, song)
   setData(path, song)
+  logging.info(' ✔ Done')
     
 # Get song data from iTunes API
-def getSongData(track, artist):
+def getSongData(track, artist, exit=True):
   try:
     if track and artist:
       for s in itunespy.search_track(track):
@@ -80,15 +78,38 @@ def getSongData(track, artist):
         for s in album.get_tracks():
           songs.append(s)
       return songs
-    return
+    # Attempt to find a close match if no exact matches found
+    song = itunespy.search(' '.join([track,artist]))[0]
+    if song:
+      return song
   except LookupError as e:
-    logging.warning(str(e))
-    sys.exit()
+    if exit:
+      logging.warning(str(e))
+      sys.exit()
+      
+# Attempt to retrieve song data from URL
+def getVideoData(url):
+  # Get YouTube video title
+  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urlopen(req, context=ssl._create_unverified_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  title = soup.find('span', { 'class':'watch-title' }).get_text().strip()
+  # Remove parenthesis contents and commonly added words
+  title = re.sub(re.compile(r'\([^)]*\)|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
+  title = title.translate(str.maketrans('','',string.punctuation))
+  title = ' '.join(title.split())
+  # Query iTunes API
+  try:
+    return itunespy.search(title)[0]
+  except LookupError:
+    pass
 
 # Displays an interactive menu of songs
 def showMenu(options):
   menu = cursesmenu.SelectionMenu(options, title='Select an song')
   selection = menu.get_selection(options)
+  if selection >= len(options):
+    sys.exit()
   return selection
   
 # Scrapes youtube for a video that has track and artist in the name
@@ -108,7 +129,7 @@ def download(url, progressBar=False):
   tempDir = Path.home()/'Downloads'/'Music'/'temp'
   if not os.path.exists(tempDir):
     os.makedirs(tempDir)
-  id = url.split('=')[-1]
+  id = url.split('watch?v=')[-1]
   yt = pytube.YouTube(url)
   if progressBar:
     logging.info(' Downloading...')
