@@ -13,8 +13,8 @@ from bs4 import BeautifulSoup
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
-  parser.add_argument('-t','--track', default='', help='Specify the track name query')
-  parser.add_argument('-a','--artist', default='', help='Specify the artist name query')
+  parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
+  parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
   parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
   parser.add_argument('-p','--progress', help='Display a command-line progress bar', action='store_true')
   parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
@@ -40,8 +40,8 @@ def main():
       song = Song(data)
   else:
     if args.track or args.artist:
-      data['track_name'] = args.track
-      data['artist_name'] = args.artist
+      data['track_name'] = ' '.join(args.track)
+      data['artist_name'] = ' '.join(args.artist)
     else:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
