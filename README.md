@@ -11,11 +11,13 @@
 </p>
 
 ## Description  
-A program that simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
-Once downloaded, the program will also embed the output file with the appropriate metadata and cover art via the iTunes API.  
+Simplify the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the name of the artist/track you're looking for or the video URL.  
+The program will attempt to retrieve data for a song matching the input by querying the iTunes API and then use the data to find a corresponding YouTube video if one is not provided.  
+The video will then be downloaded, converted, and the retrieved data will be used to populate the metadata of the MP3.  
+Additionally, if a URL is provided and no match is found, the program will prompt the user for the track/artist and use the YouTube thumbnail as the album artwork.  
 
 ## Install  
-You can install the program with the following command:
+You can install the program with the following command:  
 ```sh
 pip install yt2mp3
 ```
@@ -28,7 +30,7 @@ python yt2mp3.py [-options]
 
 #### Options:  
 | Arguments        |                                                  |
-|:----------------:|--------------------------------------------------|
+|------------------|--------------------------------------------------|
 | `-t, --track`    | Specify the track name query                     |
 | `-a, --artist`   | Specify the artist name query                    |
 | `-u, --url`      | Specify a Youtube URL or ID                      |
@@ -36,12 +38,12 @@ python yt2mp3.py [-options]
 | `-p, --progress` | Display a command-line progress bar              |
 | `-h, --help`     | Displays information on usage and functionality  |  
 
-Once complete, the resulting MP3 file will be saved to your *Downloads* directory, with the following file-structure `Music/{artist}/{track}.mp3`. 
+Once complete, the resulting MP3 file will be saved to your *Downloads* directory, with the following file-structure `Music/{artist}/{track}.mp3`.  
 
 ***Note:*** Displaying the progress bar currently has a significant impact on download performance, due to [#180](https://github.com/nficano/pytube/issues/180).  
 
 
-## Development 
+## Development  
 You can download and install the app with the following commands:  
 
 ```sh
