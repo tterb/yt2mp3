@@ -16,6 +16,17 @@ setuptools.setup(
   keywords = ['youtube', 'convert', 'mp3', 'download', 'itunes', 'music', 'cli'],
   packages = setuptools.find_packages(),
   scripts=['bin/yt2mp3'],
+  install_requires=[
+    'pydub==0.21.0',
+    'mutagen==1.40.0',
+    'curses_menu==0.5.0',
+    'requests==2.18.4',
+    'setuptools==39.2.0',
+    'itunespy==1.5.5',
+    'pytube==9.2.2',
+    'Pillow==5.1.0',
+    'beautifulsoup4==4.6.0'
+  ],
   classifiers = [
     'Development Status :: 4 - Beta',
     'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5',
