@@ -7,7 +7,7 @@
 </p>  
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/16360374/41496879-b19ce040-70fe-11e8-90c0-0f3e67839bf1.gif" width="700"/>
+  <img src="https://user-images.githubusercontent.com/16360374/42131622-f496ba52-7cba-11e8-9891-cf0835793c4d.gif" width="700"/>
 </p>
 
 ## Description  
@@ -25,7 +25,7 @@ pip install yt2mp3
 ## Usage  
 The program can executed via Python 3 as follows:  
 ```sh
-python yt2mp3.py [-options]
+yt2mp3 [-options]
 ```
 
 #### Options:  
