@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+yt2mp3
+A program that simplifies the process of searching, downloading and converting Youtube videos to MP3 files with embedded metadata via the iTunes API.
+__init__.py
+Brett Stevenson (c) 2018
+"""
 
 import sys, os, re, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
 from mutagen.mp3 import MP3
@@ -10,13 +16,12 @@ from PIL import Image
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
   parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
   parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
   parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
-  parser.add_argument('-p','--progress', help='Display a command-line progress bar', action='store_true')
+  parser.add_argument('-v','--verbose', help='Display a command-line progress bar', action='store_true')
   parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
   args = parser.parse_args()
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
@@ -57,7 +62,7 @@ def main():
     data = defaultdict(str, result.__dict__)
   data['video_url'] = url
   song = Song(data)
-  tempPath = download(song.video_url, args.progress)
+  tempPath = download(song.video_url, args.verbose)
   path = convertToMP3(tempPath, song)
   setData(path, song)
   logging.info(' ✔ Done')
@@ -86,7 +91,7 @@ def getSongData(track, artist, exit=True):
     if exit:
       logging.warning(str(e))
       sys.exit()
-      
+
 # Attempt to retrieve song data from URL
 def getVideoData(url):
   # Get YouTube video title
