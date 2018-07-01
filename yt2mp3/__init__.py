@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+yt2mp3
+A program that simplifies the process of searching, downloading and converting Youtube videos to MP3 files with embedded metadata via the iTunes API.
+yt2mp3/__init__.py
+Brett Stevenson (c) 2018
+"""
 
 import sys, os, re, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
 from mutagen.mp3 import MP3
@@ -10,58 +16,6 @@ from PIL import Image
 from pathlib import Path
 from bs4 import BeautifulSoup
 
-
-def main():
-  parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
-  parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
-  parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
-  parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
-  parser.add_argument('-p','--progress', help='Display a command-line progress bar', action='store_true')
-  parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
-  args = parser.parse_args()
-  logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
-  # Get song track/artist from user
-  data = defaultdict(str)
-  if args.url:
-    url = args.url
-    if len(url) <= 12:
-      url = 'https://www.youtube.com/watch?v='+url
-    result = getVideoData(url)
-    if not result:
-      data['track_name'] = input(' Track: ')
-      data['artist_name'] = input(' Artist: ')
-      result = getSongData(data['track_name'], data['artist_name'], False)
-      if not result:
-        data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
-  else:
-    if args.track or args.artist:
-      data['track_name'] = ' '.join(args.track)
-      data['artist_name'] = ' '.join(args.artist)
-    else:
-      data['track_name'] = input(' Track: ')
-      data['artist_name'] = input(' Artist: ')
-    if data['track_name'] and data['artist_name']:
-      result = getSongData(data['track_name'], data['artist_name'])
-    elif data['track_name'] or data['artist_name']:
-      songs = getSongData(data['track_name'], data['artist_name'])
-      if data['track_name']:
-        options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
-      elif data['artist_name']:
-        options = [s.track_name for s in songs]
-      result = songs[showMenu(options)]
-    if not data['track_name'] and not data['artist_name'] or not result:
-      logging.warning('Sorry, no results were found.')
-      sys.exit()
-    url = getURL(data['track_name'], data['artist_name'])
-  if result:
-    data = defaultdict(str, result.__dict__)
-  data['video_url'] = url
-  song = Song(data)
-  tempPath = download(song.video_url, args.progress)
-  path = convertToMP3(tempPath, song)
-  setData(path, song)
-  logging.info(' ✔ Done')
-    
 # Get song data from iTunes API
 def getSongData(track, artist, exit=True):
   try:
@@ -86,7 +40,7 @@ def getSongData(track, artist, exit=True):
     if exit:
       logging.warning(str(e))
       sys.exit()
-      
+
 # Attempt to retrieve song data from URL
 def getVideoData(url):
   # Get YouTube video title
@@ -200,7 +154,3 @@ class Song(object):
     self.disc_count = str(data['disc_count'])
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
-
-
-if __name__ == '__main__':
-  main()

@@ -7,14 +7,14 @@
 </p>  
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/16360374/41496879-b19ce040-70fe-11e8-90c0-0f3e67839bf1.gif" width="700"/>
+  <img src="https://user-images.githubusercontent.com/16360374/42131622-f496ba52-7cba-11e8-9891-cf0835793c4d.gif" width="700"/>
 </p>
 
 ## Description  
-Simplify the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the name of the artist/track you're looking for or the video URL.  
-The program will attempt to retrieve data for a song matching the input by querying the iTunes API and then use the data to find a corresponding YouTube video if one is not provided.  
+This program aims to simplify the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
+The program will attempt to retrieve data for a song matching the provided input by querying the iTunes API and then use the data to find a corresponding YouTube video, if a URL is not provided.  
 The video will then be downloaded, converted, and the retrieved data will be used to populate the metadata of the MP3.  
-Additionally, if a URL is provided and no match is found, the program will prompt the user for the track/artist and use the YouTube thumbnail as the album artwork.  
+Additionally, if a URL is provided and no match is found for the song data, the program will prompt the user for the track/artist and use the YouTube thumbnail as the album artwork.  
 
 ## Install  
 You can install the program with the following command:  
@@ -25,7 +25,7 @@ pip install yt2mp3
 ## Usage  
 The program can executed via Python 3 as follows:  
 ```sh
-python yt2mp3.py [-options]
+yt2mp3 [-options]
 ```
 
 #### Options:  
@@ -35,7 +35,7 @@ python yt2mp3.py [-options]
 | `-a, --artist`   | Specify the artist name query                    |
 | `-u, --url`      | Specify a Youtube URL or ID                      |
 | `-q, --quiet`    | Suppress program command-line output             |
-| `-p, --progress` | Display a command-line progress bar              |
+| `-v, --verbose` | Display a command-line progress bar              |
 | `-h, --help`     | Displays information on usage and functionality  |  
 
 Once complete, the resulting MP3 file will be saved to your *Downloads* directory, with the following file-structure `Music/{artist}/{track}.mp3`.  
