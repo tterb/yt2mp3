@@ -1,12 +1,12 @@
 # Changelog  
 
-## Version 1.0.3  
+## Version 1.0.5  
 
   * Added additional error-handling
   * Improved song data acquisition for YouTube URLs
   * Improved command-line option functionality
   * Added additional project documentation
-  * Fixed issue with published PyPi program
+  * Fixed issue with missing executable from PyPi
 
 --------------------------------  
 
