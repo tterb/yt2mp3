@@ -1,4 +1,4 @@
-# YouTube to MP3  
+# YouTube to MP3
 
 <p align="right">
   <!-- <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/status/yt2mp3.svg" alt="PyPI status"/></a> -->
@@ -7,9 +7,9 @@
   <a href="https://github.com/tterb/yt2mp3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/tterb/yt2mp3.svg" alt="License"/></a>
 </p>  
 
-<!-- <p align="center"> -->
-<img src="https://user-images.githubusercontent.com/16360374/42131622-f496ba52-7cba-11e8-9891-cf0835793c4d.gif" width="650"/>
-<!-- </p> -->
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/16360374/42410056-a417e33e-8198-11e8-8c43-f60b6a6037dc.gif" width="650"/>
+</p>
 
 ## Description  
 This program aims to simplify the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
@@ -26,7 +26,7 @@ pip install yt2mp3
 ```
 
 ## Usage  
-The program can executed via Python 3 as follows:  
+The program can be executed via the as follows:  
 ```sh
 yt2mp3 [-options]
 ```
