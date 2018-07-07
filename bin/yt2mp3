@@ -10,27 +10,29 @@ import yt2mp3, sys, argparse, logging
 from collections import defaultdict
 
 def main():
-  parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
-  parser.add_argument('--version', action='version', version='v1.0.5', help='Show the version number and exit')
-  parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
-  parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
-  parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
-  parser.add_argument('-p','--playlist', help='Specify the YouTube URL for the playlist you want to convert')
-  parser.add_argument('-v','--verbose', help='Display a command-line progress bar', action='store_true')
-  parser.add_argument('-q','--quiet', help='Suppress command-line output', action='store_true')
+  parser = argparse.ArgumentParser(prog='yt2mp3', usage='%(prog)s [options]', add_help=True)
+  parser.add_argument('--version', action='version', version='v1.0.5', help='show the program version number and exit')
+  parser.add_argument('-t', '--track', default='', help='Specify the track name query', nargs='+')
+  parser.add_argument('-a', '--artist', default='', help='specify the artist name query', nargs='+')
+  parser.add_argument('-u', '--url', help='specify the YouTube URL/ID of the video to convert')
+  parser.add_argument('-p', '--playlist', help='specify the YouTube URL/ID of the playlist to convert')
+  parser.add_argument('-v', '--verbose', help='display a download progress bar', action='store_true')
+  parser.add_argument('-q', '--quiet', help='suppress command-line output', action='store_true')
   args = parser.parse_args()
+  # Set logging level
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
-  # Get song track/artist from user
+
   data = defaultdict(str)
   if args.playlist:
-    url = 'https://www.youtube.com/playlist?list='+args.playlist.split('&list=')[-1]
+    url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
     video_list = yt2mp3.getVideoList(url)
     yt2mp3.downloadPlaylist(video_list)
+    sys.exit()
   elif args.url:
     url = args.url
     if len(url) <= 12:
       url = 'https://www.youtube.com/watch?v='+url
-    result = yt2mp3.getVideoData(url)
+    result = yt2mp3.getVideoData(getVideoTitle(url))
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
@@ -38,6 +40,7 @@ def main():
       if not result:
         data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
   else:
+    # Get song track/artist from user
     if args.track or args.artist:
       data['track_name'] = ' '.join(args.track)
       data['artist_name'] = ' '.join(args.artist)
