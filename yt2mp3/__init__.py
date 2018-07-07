@@ -50,7 +50,7 @@ def getVideoData(url):
   soup = BeautifulSoup(response.read(), 'lxml')
   title = soup.find('span', { 'class':'watch-title' }).get_text().strip()
   # Remove parenthesis contents and commonly added words
-  title = re.sub(re.compile(r'\([^)]*\)|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
+  title = re.sub(re.compile(r'\([^)]*\)|[[^]]*\]|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
   title = title.translate(str.maketrans('','',string.punctuation))
   title = ' '.join(title.split())
   # Query iTunes API
@@ -66,7 +66,7 @@ def getVideoTitle(url):
   soup = BeautifulSoup(response.read(), 'lxml')
   title = soup.find('span', { 'class':'watch-title' }).get_text().strip()
   # Remove parenthesis contents and commonly added words
-  keywords = re.sub(re.compile(r'\([^)]*\)|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
+  keywords = re.sub(re.compile(r'\([^)]*\)|[[^]]*\]|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
   keywords = keywords.translate(str.maketrans('','',string.punctuation))
   keywords = ' '.join(keywords.split())
   return title, keywords
@@ -91,7 +91,7 @@ def getURL(track, artist):
     results.append('https://www.youtube.com' + vid['href'])
   return results[0]
 
-# Downloads songs from youtube, songs must be a list of track objects
+# Downloads the video at the provided url 
 def download(url, progressBar=False):
   tempDir = Path.home()/'Downloads'/'Music'/'temp'
   if not os.path.exists(tempDir):
@@ -104,6 +104,25 @@ def download(url, progressBar=False):
   yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
   logging.info(' ✔ Download Complete')
   return glob.glob(os.path.join(str(tempDir), id+'.*'))[0]
+
+# Downloads each of the songs from the playlist
+def downloadPlaylist(videos):
+  for i, url in enumerate(videos):
+    title, keywords = getVideoTitle(url)
+    logging.info(str(i+1)+' of '+str(len(videos))+': '+str(title))
+    result = getVideoData(url)
+    if not result:
+      print(title)
+      track = input(' Track: ')
+      artist = input(' Artist: ')
+      result = getSongData(track, artist)
+    if result:
+      song = Song(defaultdict(str, result.__dict__))
+      song.video_url = url
+    tempPath = download(url)
+    path = convertToMP3(tempPath, song)
+    setData(path, song)
+  logging.info(' ✔ Done')
 
 # Returns a list of video URLs in playlist
 def getVideoList(url):
