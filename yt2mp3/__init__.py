@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and converting Youtube videos to MP3 files with embedded metadata via the iTunes API.
+A program that simplifies the process of searching, downloading and converting
+Youtube videos to MP3 files with embedded metadata via the iTunes API.
 yt2mp3/__init__.py
 Brett Stevenson (c) 2018
 """
 
-import sys, os, re, argparse, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
+import sys, os, re, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
 from mutagen.mp3 import MP3
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TALB,TCON,TRCK,TDRC,TPOS
@@ -57,6 +58,18 @@ def getVideoData(url):
     return itunespy.search(title)[0]
   except LookupError:
     pass
+    
+def getVideoTitle(url):
+  # Get YouTube video title
+  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urlopen(req, context=ssl._create_unverified_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  title = soup.find('span', { 'class':'watch-title' }).get_text().strip()
+  # Remove parenthesis contents and commonly added words
+  keywords = re.sub(re.compile(r'\([^)]*\)|ft|feat|\blyrics?\b|official|video|audio', re.IGNORECASE), '', title)
+  keywords = keywords.translate(str.maketrans('','',string.punctuation))
+  keywords = ' '.join(keywords.split())
+  return title, keywords
 
 # Displays an interactive menu of songs
 def showMenu(options):
@@ -91,6 +104,12 @@ def download(url, progressBar=False):
   yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
   logging.info(' ✔ Download Complete')
   return glob.glob(os.path.join(str(tempDir), id+'.*'))[0]
+
+# Returns a list of video URLs in playlist
+def getVideoList(url):
+  yt = pytube.Playlist(url)
+  video_list = ['https://www.youtube.com'+i for i in yt.parse_links()]
+  return video_list
 
 # Convert the downloaded video file to MP3
 def convertToMP3(tempPath, song):
