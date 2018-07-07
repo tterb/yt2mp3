@@ -11,6 +11,7 @@ from collections import defaultdict
 
 def main():
   parser = argparse.ArgumentParser(description='YouTube to MP3 Converter')
+  parser.add_argument('--version', action='version', version='v1.0.5', help='Show the version number and exit')
   parser.add_argument('-t','--track', default='', help='Specify the track name query', nargs='+')
   parser.add_argument('-a','--artist', default='', help='Specify the artist name query', nargs='+')
   parser.add_argument('-u','--url', help='Specify the YouTube URL you want to convert')
@@ -24,11 +25,11 @@ def main():
     url = args.url
     if len(url) <= 12:
       url = 'https://www.youtube.com/watch?v='+url
-    result = getVideoData(url)
+    result = yt2mp3.getVideoData(url)
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
-      result = getSongData(data['track_name'], data['artist_name'], False)
+      result = yt2mp3.getSongData(data['track_name'], data['artist_name'], False)
       if not result:
         data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
   else:
