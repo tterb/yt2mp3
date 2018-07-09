@@ -1,4 +1,4 @@
-# YouTube to MP3  
+# YouTube to MP3
 
 <p align="right">
   <!-- <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/status/yt2mp3.svg" alt="PyPI status"/></a> -->
@@ -7,9 +7,9 @@
   <a href="https://github.com/tterb/yt2mp3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/tterb/yt2mp3.svg" alt="License"/></a>
 </p>  
 
-<!-- <p align="center"> -->
-<img src="https://user-images.githubusercontent.com/16360374/42131622-f496ba52-7cba-11e8-9891-cf0835793c4d.gif" width="650"/>
-<!-- </p> -->
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/16360374/42410056-a417e33e-8198-11e8-8c43-f60b6a6037dc.gif" width="650"/>
+</p>
 
 ## Description  
 This program aims to simplify the process of downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
@@ -26,7 +26,7 @@ pip install yt2mp3
 ```
 
 ## Usage  
-The program can executed via Python 3 as follows:  
+The program can be executed via the as follows:  
 ```sh
 yt2mp3 [-options]
 ```
@@ -34,11 +34,13 @@ yt2mp3 [-options]
 #### Options:  
 | Arguments        |                                                  |
 |------------------|--------------------------------------------------|
+| `--version`      | Show the version number and exit                 |
 | `-t, --track`    | Specify the track name query                     |
 | `-a, --artist`   | Specify the artist name query                    |
 | `-u, --url`      | Specify a Youtube URL or ID                      |
+| `-p, --playlist` | Specify a Youtube playlist URL or ID             |
 | `-q, --quiet`    | Suppress program command-line output             |
-| `-v, --verbose` | Display a command-line progress bar              |
+| `-v, --verbose`  | Display a command-line progress bar              |
 | `-h, --help`     | Displays information on usage and functionality  |  
 
 ***Note:*** Displaying the progress bar currently has a significant impact on download performance, due to [#180](https://github.com/nficano/pytube/issues/180).  
