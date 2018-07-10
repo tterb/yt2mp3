@@ -95,12 +95,16 @@ def downloadPlaylist(videos):
     logging.info(str(i+1)+' of '+str(len(videos))+': '+str(title))
     result = getVideoData(title)
     if not result:
-      track = input(' Track: ')
-      artist = input(' Artist: ')
-      result = getSongData(track, artist)
+      data['track_name'] = input(' Track: ')
+      data['artist_name'] = input(' Artist: ')
+      data['video_url'] = url
+      data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
+      result = getSongData(data['track_name'], data['artist_name'])
     if result:
       song = Song(defaultdict(str, result.__dict__))
       song.video_url = url
+    else:
+      song = Song(data)
     tempPath = download(url)
     path = convertToMP3(tempPath, song)
     setData(path, song)

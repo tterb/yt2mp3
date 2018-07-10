@@ -25,8 +25,8 @@ def main():
   data = defaultdict(str)
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-    video_list = yt2mp3.getVideoList(url)
-    yt2mp3.downloadPlaylist(video_list)
+    queue = yt2mp3.getVideoList(url)
+    yt2mp3.downloadPlaylist(queue)
     sys.exit()
   elif args.url:
     url = args.url
@@ -36,9 +36,8 @@ def main():
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
+      data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
       result = yt2mp3.getSongData(data['track_name'], data['artist_name'], False)
-      if not result:
-        data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
   else:
     # Get song track/artist from user
     if args.track or args.artist:
