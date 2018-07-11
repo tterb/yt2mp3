@@ -55,7 +55,6 @@ def getVideoData(title):
 
 # Get YouTube video title
 def getVideoTitle(url):
-  # Get YouTube video title
   req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
   response = urlopen(req, context=ssl._create_unverified_context())
   soup = BeautifulSoup(response.read(), 'lxml')
@@ -88,7 +87,7 @@ def getVideoList(url):
   return video_list
 
 # Downloads each of the songs from the playlist
-def downloadPlaylist(videos):
+def downloadPlaylist(videos, overwrite):
   logging.info('Downloading...')
   for i, url in enumerate(videos):
     title = getVideoTitle(url)
@@ -105,9 +104,10 @@ def downloadPlaylist(videos):
       song.video_url = url
     else:
       song = Song(data)
-    tempPath = download(url)
-    path = convertToMP3(tempPath, song)
-    setData(path, song)
+    if overwrite or not fileExists(song):
+      tempPath = download(url)
+      path = convertToMP3(tempPath, song)
+      setData(path, song)
   logging.info(' ✔ Done')
 
 # Downloads the video at the provided url 
@@ -123,6 +123,12 @@ def download(url, progressBar=False):
   yt.streams.filter(subtype='mp4', progressive=True).first().download(tempDir, id)
   logging.info(' ✔ Download Complete')
   return glob.glob(os.path.join(str(tempDir), id+'.*'))[0]
+
+# Checks if a duplicate file exists in the output directory
+def fileExists(song):
+  path = Path.home()/'Downloads'/'Music'/song.artist
+  path = os.path.join(path, song.track+'.mp3')
+  return os.path.exists(path)
 
 # Convert the downloaded video file to MP3
 def convertToMP3(tempPath, song):

@@ -16,6 +16,7 @@ def main():
   parser.add_argument('-a', '--artist', default='', help='specify the artist name query', nargs='+')
   parser.add_argument('-u', '--url', help='specify the YouTube URL/ID of the video to convert')
   parser.add_argument('-p', '--playlist', help='specify the YouTube URL/ID of the playlist to convert')
+  parser.add_argument('-o', '--overwrite', help='overwrite file if one exists in output directory', action='store_true')
   parser.add_argument('-v', '--verbose', help='display a download progress bar', action='store_true')
   parser.add_argument('-q', '--quiet', help='suppress command-line output', action='store_true')
   args = parser.parse_args()
@@ -26,7 +27,7 @@ def main():
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
     queue = yt2mp3.getVideoList(url)
-    yt2mp3.downloadPlaylist(queue)
+    yt2mp3.downloadPlaylist(queue, args.overwrite)
     sys.exit()
   elif args.url:
     url = args.url
@@ -63,6 +64,9 @@ def main():
     data = defaultdict(str, result.__dict__)
   data['video_url'] = url
   song = yt2mp3.Song(data)
+  if not args.overwrite and yt2mp3.fileExists(song):
+    logging.info('This song already exists in the output directory')
+    sys.exit()
   tempPath = yt2mp3.download(song.video_url, args.verbose)
   path = yt2mp3.convertToMP3(tempPath, song)
   yt2mp3.setData(path, song)
