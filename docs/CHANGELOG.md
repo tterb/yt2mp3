@@ -1,5 +1,6 @@
 # Changelog  
 
+
 ## Version 1.0.5  
 
   * Added additional error-handling
@@ -7,6 +8,12 @@
   * Improved command-line option functionality
   * Added additional project documentation
   * Fixed issue with missing executable from PyPi
+
+--------------------------------  
+
+## Version 1.0.2
+
+  * Published package to PyPi
 
 --------------------------------  
 
