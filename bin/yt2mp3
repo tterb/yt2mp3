@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and converting Youtube videos to MP3 files with embedded metadata via the iTunes API.
+A program that simplifies the process of searching, downloading and converting
+Youtube videos to MP3 files with embedded metadata via the iTunes API.
 bin/yt2mp3
 Brett Stevenson (c) 2018
 """
 
-import yt2mp3, sys, argparse, logging
+import sys, logging, argparse, yt2mp3
 from collections import defaultdict
 
 def main():
@@ -33,7 +34,7 @@ def main():
     url = args.url
     if len(url) <= 12:
       url = 'https://www.youtube.com/watch?v='+url
-    result = yt2mp3.getVideoData(getVideoTitle(url))
+    result = yt2mp3.getVideoData(yt2mp3.getVideoTitle(url))
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
@@ -67,11 +68,10 @@ def main():
   if not args.overwrite and yt2mp3.fileExists(song):
     logging.info('This song already exists in the output directory')
     sys.exit()
-  tempPath = yt2mp3.download(song.video_url, args.verbose)
-  path = yt2mp3.convertToMP3(tempPath, song)
+  temp_path = yt2mp3.download(song.video_url, args.verbose)
+  path = yt2mp3.convertToMP3(temp_path, song)
   yt2mp3.setData(path, song)
   logging.info(' ✔ Done')
-  
 
 if __name__ == '__main__':
   main()
