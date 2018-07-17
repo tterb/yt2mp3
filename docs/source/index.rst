@@ -6,8 +6,6 @@
 yt2mp3
 ========  
 
-Release v\ |version|. (:ref:`Installation <install>`)
-
 .. image:: https://img.shields.io/pypi/v/yt2mp3.svg
  :target: https://pypi.python.org/pypi/yt2mp3/
  :alt: Pypi
@@ -25,7 +23,7 @@ Release v\ |version|. (:ref:`Installation <install>`)
  :alt: License
  
 Overview
---------
+----------
 
 This program simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line.  
 
@@ -37,20 +35,20 @@ Once finished, the resulting MP3 file will be saved to your *Downloads* director
 
 
 Contents
-========
+==========
 
 .. toctree::
-  :maxdepth: 2
-
-  install  
-  usage  
-  development
-  changes  
-  license  
+   :maxdepth: 2
+  
+   install
+   usage
+   development
+   changes
+   license
 
 
 Indices and tables
-==================
+=====================
 
 * :ref:`genindex`
 * :ref:`modindex`

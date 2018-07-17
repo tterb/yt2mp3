@@ -1,5 +1,5 @@
 Development
-=======
+==============
 
 If you'd like to contribute to the project, you can download and install the program with the following commands:  
 
