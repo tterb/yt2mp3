@@ -1,14 +1,14 @@
 Changelog  
 ==============
 
-Version 1.1.0 
----------------- 
-
-* Added support for playlists
-* Improved command-line option functionality  
-* Added duplicate check and overwrite command-line option
-
---------------------------------  
+.. Version 1.1.0 
+.. ---------------- 
+.. 
+.. * Added support for playlists
+.. * Improved command-line option functionality  
+.. * Added duplicate check and overwrite command-line option
+.. 
+.. --------------------------------  
 
 Version 1.0.5  
 ----------------

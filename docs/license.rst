@@ -1,7 +1,7 @@
 The MIT License (MIT)
 =====================
 
-Copyright (c) 2018 Brett Stevenson <bstevensondev@gmail.com>
+Copyright (c) 2018 `Brett Stevenson <bstevensondev@gmail.com>`_
 
 |MIT license|
 
