@@ -1,11 +1,17 @@
 Usage
 =====
 
-The program can be executed via the as follows:
+The program can be executed via the command-line as follows:
 
 .. code:: bash
   
-  yt2mp3 [-options]
+  $ yt2mp3 [-options]
+
+
+|terminal|
+
+.. |terminal| image:: images/terminal.gif
+  :alt: Usage Example
 
 Options
 --------------
@@ -30,13 +36,4 @@ Options
 | ``-h, --help``      | Display  information on usage and functionality  |
 +----------------------+-------------------------------------------------------+
 
-**Note:** Displaying the progress bar currently has a significant impact on download performance, due to \#180_.  
-
-.. _180: https://github.com/nficano/pytube/issues/180
-
-________________________________
-
-|terminal|
-
-.. |terminal| image:: images/terminal.gif
-  :alt: Usage Example
+**Note:** Displaying the progress bar currently has a significant impact on download performance, due to `#180 <https://github.com/nficano/pytube/issues/180>`_.  
