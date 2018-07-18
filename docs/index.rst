@@ -28,22 +28,21 @@ Overview
 This program simplifies the process of downloading and converting Youtube videos to MP3 files from the command-line.  
 
 All you need is the video URL or the name of the artist/track you're looking for. The program will then attempt to retrieve data for a song by matching the provided input by querying the iTunes API and find a corresponding YouTube video, if a URL is not provided. The video will then be downloaded, converted, and the gathered data will be used to populate the metadata of the MP3.  
-
 Once finished, the resulting MP3 file will be saved to your *Downloads* directory, with the following file-structure ``Music/{artist}/{track}.mp3``.
 
-***Note***: If a URL is provided and no match is found for the song data, the YouTube thumbnail will be used as the album artwork.  
+**Note:** If a URL is provided and no match is found for the song data, the YouTube thumbnail will be used as the album artwork.  
 
 
 Contents
 ==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
   
    install
    usage
-   development
    changes
+   contributing
    license
 
 

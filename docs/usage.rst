@@ -10,7 +10,7 @@ The program can be executed via the as follows:
 Options
 --------------
 
-+======================+=======================================================+
++----------------------+-------------------------------------------------------+
 | ``-t, --track``     | Specify the track name query                     |
 +----------------------+-------------------------------------------------------+
 | ``-a, --artist``    | Specify the artist name query                    |
@@ -30,7 +30,7 @@ Options
 | ``-h, --help``      | Display  information on usage and functionality  |
 +----------------------+-------------------------------------------------------+
 
-***Note:*** Displaying the progress bar currently has a significant impact on download performance, due to \#180_.  
+**Note:** Displaying the progress bar currently has a significant impact on download performance, due to \#180_.  
 
 .. _180: https://github.com/nficano/pytube/issues/180
 
