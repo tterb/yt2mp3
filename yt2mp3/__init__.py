@@ -133,15 +133,15 @@ def downloadPlaylist(videos, verbose, overwrite):
   logging.info(' ✔ Done')
 
 # Convert the downloaded video file to MP3
-def convertToMP3(temp_path, song):
+def convertToMP3(video, song):
   logging.info(' ♬ Converting to MP3')
-  output_dir = Path.home()/'Downloads'/'Music'/song.artist
-  if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
-  path = Path(output_dir, song.track+'.mp3')
-  pydub.AudioSegment.from_file(temp_path).export(path, format='mp3')
-  shutil.rmtree(Path(temp_path).parent)
-  return path
+  artist_dir = Path.home()/'Downloads'/'Music'/song.artist
+  if not os.path.exists(artist_dir):
+    os.makedirs(artist_dir)
+  song_path = os.path.join(artist_dir, song.track+'.mp3')
+  pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
+  shutil.rmtree(Path(video).parent)
+  return song_path
 
 # Sets the ID3 metadata of the MP3 file
 def setID3(path, song):
@@ -156,16 +156,17 @@ def setID3(path, song):
   tags.add(TPOS(encoding=3, text=song.disc_number+'/'+song.disc_count))
   tags.add(TDRC(encoding=3, text=song.release_date[0:4]))
   # Embed cover-art in ID3 metadata
-  img_url = song.artwork_url
+  img_url = '/'.join(song.artwork_url.split('/')[:-1])+'/480x480bb.jpg'
   img_path = Path.home()/'Downloads'/'Music'/'CoverArt'
-  os.system('mkdir -p %s' % (img_path))
-  img_path = Path(img_path, 'cover.jpg')
+  if not os.path.exists(img_path):
+    os.makedirs(img_path)
+  img_path = os.path.join(img_path, 'cover.jpg')
   response = requests.get(img_url)
   Image.open(io.BytesIO(response.content)).save(img_path)
   tags.add(APIC(encoding=3, mime='image/jpg', type=3,
                 desc=u'Cover', data=open(img_path, 'rb').read()))
   tags.save()
-  shutil.rmtree(img_path)
+  shutil.rmtree(Path(img_path).parent)
 
 # Display a download progress bar
 def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
@@ -179,6 +180,7 @@ def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
 
 
 class Song(object):
+
   def __init__(self, data):
     self.track = data['track_name']
     self.artist = data['artist_name']
