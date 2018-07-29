@@ -3,6 +3,7 @@
 <p align="right">
   <!-- <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/status/yt2mp3.svg" alt="PyPI status"/></a> -->
   <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/v/yt2mp3.svg" alt="PyPi Version"/></a>
+  <a href='https://yt2mp3.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yt2mp3/badge/?version=latest' alt='Documentation Status'/></a>
   <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://pypip.in/py_versions/yt2mp3/badge.svg" alt="PyPI Python Versions"/></a>
   <a href="https://github.com/tterb/yt2mp3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/tterb/yt2mp3.svg" alt="License"/></a>
 </p>  
