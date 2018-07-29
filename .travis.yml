@@ -6,14 +6,15 @@ python:
 os:
     - linux
     - osx
+sudo: required
 before_install:
     - pip install pytest pytest-cov
     - pip install coveralls
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:mc3man/trusty-media; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; fi
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y ffmpeg libavcodec-extra-53; fi
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y ffmpeg; fi
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
-    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ffmpeg --with-libvorbis --with-sdl2 --with-theora; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ffmpeg; fi
 install:
     - pip install -r requirements.txt
     - pip install -e .
