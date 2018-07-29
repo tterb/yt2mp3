@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and converting
-Youtube videos to MP3 files with embedded metadata via the iTunes API.
+A program that simplifies the process of searching, downloading and 
+converting Youtube videos to MP3 files with embedded metadata via the 
+iTunes API.
 yt2mp3/__init__.py
 Brett Stevenson (c) 2018
 """
@@ -11,13 +12,12 @@ import sys, os, re, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, sh
 from urllib.request import Request, urlopen
 from collections import defaultdict
 from pathlib import Path
-from mutagen.mp3 import MP3
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
 from PIL import Image
 from bs4 import BeautifulSoup
 
 # Get song data from iTunes API
-def getSongData(track, artist, exit_on_fail=True):
+def getSongData(track, artist, exit_fail=True):
   try:
     if track and artist:
       for song in itunespy.search_track(track):
@@ -37,13 +37,13 @@ def getSongData(track, artist, exit_on_fail=True):
     if song:
       return song
   except LookupError as err:
-    if exit_on_fail:
-      logging.warning("%s", err)
+    if exit_fail:
+      logging.warning(" ✘ %s", err)
       sys.exit()
 
 # Attempt to retrieve song data from the video title
 def getVideoData(title):
-  # Remove parenthesis, punctuation and commonly added words
+  # Remove parenthesis, punctuation and nondescript words
   regex = r'\([^)]*\)|[[^]]*\]|ft|feat|\blyrics?\b|official|video|audio'
   keywords = re.sub(re.compile(regex, re.IGNORECASE), '', title)
   keywords = keywords.translate(str.maketrans('', '', string.punctuation))
@@ -70,7 +70,7 @@ def showMenu(options):
   return selection
 
 # Scrapes YouTube for a video with the track and artist
-def getURL(track, artist):
+def getVideoURL(track, artist):
   query = urllib.parse.quote(track+" "+artist)
   url = 'https://www.youtube.com/results?search_query=' + query
   req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
@@ -81,6 +81,26 @@ def getURL(track, artist):
     results.append('https://www.youtube.com' + vid['href'])
   return results[0]
 
+# Checks if a duplicate file exists in the output directory
+def fileExists(song):
+  path = Path.home()/'Downloads'/'Music'/song.artist
+  path = Path(path, song.track+'.mp3')
+  return os.path.exists(path)
+
+# Downloads the video at the provided url
+def download(url, verbose=False):
+  temp_dir = Path.home()/'Downloads'/'Music'/'temp'
+  if not os.path.exists(temp_dir):
+    os.makedirs(temp_dir)
+  video_id = url.split('watch?v=')[-1]
+  youtube = pytube.YouTube(url)
+  if verbose:
+    logging.info(' Downloading...')
+    youtube.register_on_progress_callback(showProgressBar)
+  youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
+  logging.info(' ✔ Download Complete')
+  return Path(temp_dir, video_id+'.mp4')
+
 # Returns a list of video URLs in playlist
 def getVideoList(url):
   youtube = pytube.Playlist(url)
@@ -88,7 +108,7 @@ def getVideoList(url):
   return video_list
 
 # Downloads each of the songs from the playlist
-def downloadPlaylist(videos, overwrite):
+def downloadPlaylist(videos, verbose, overwrite):
   for i, url in enumerate(videos):
     title = getVideoTitle(url)
     logging.info('%s of %s: %s', (i+1), len(videos), title)
@@ -107,68 +127,46 @@ def downloadPlaylist(videos, overwrite):
     else:
       song = Song(data)
     if overwrite or not fileExists(song):
-      temp_path = download(url)
+      temp_path = download(url, verbose)
       path = convertToMP3(temp_path, song)
-      setData(path, song)
+      setID3(path, song)
   logging.info(' ✔ Done')
 
-# Downloads the video at the provided url
-def download(url, progress_bar=False):
-  temp_dir = Path.home()/'Downloads'/'Music'/'temp'
-  if not os.path.exists(temp_dir):
-    os.makedirs(temp_dir)
-  video_id = url.split('watch?v=')[-1]
-  youtube = pytube.YouTube(url)
-  if progress_bar:
-    logging.info(' Downloading...')
-    youtube.register_on_progress_callback(showProgressBar)
-  youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
-  logging.info(' ✔ Download Complete')
-  return glob.glob(os.path.join(str(temp_dir), video_id+'.*'))[0]
-
-# Checks if a duplicate file exists in the output directory
-def fileExists(song):
-  path = Path.home()/'Downloads'/'Music'/song.artist
-  path = os.path.join(path, song.track+'.mp3')
-  return os.path.exists(path)
-
 # Convert the downloaded video file to MP3
-def convertToMP3(temp_path, song):
+def convertToMP3(video, song):
   logging.info(' ♬ Converting to MP3')
-  output_dir = Path.home()/'Downloads'/'Music'/song.artist
-  if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
-  path = os.path.join(output_dir, song.track+'.mp3')
-  pydub.AudioSegment.from_file(temp_path).export(path, format='mp3')
-  shutil.rmtree(Path(temp_path).parent)
-  return path
+  artist_dir = Path.home()/'Downloads'/'Music'/song.artist
+  if not os.path.exists(artist_dir):
+    os.makedirs(artist_dir)
+  song_path = os.path.join(artist_dir, song.track+'.mp3')
+  pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
+  shutil.rmtree(Path(video).parent)
+  return song_path
 
 # Sets the ID3 metadata of the MP3 file
-def setData(path, song):
-  meta = ID3(path)
-  meta.delete()
-  meta.add(TIT2(encoding=3, text=song.track))
-  meta.add(TPE1(encoding=3, text=song.artist))
-  meta.add(TPE2(encoding=3, text=song.artist))
-  meta.add(TALB(encoding=3, text=song.album))
-  meta.add(TCON(encoding=3, text=song.genre))
-  meta.add(TRCK(encoding=3, text=song.track_number+'/'+song.track_count))
-  meta.add(TPOS(encoding=3, text=song.disc_number+'/'+song.disc_count))
-  meta.add(TDRC(encoding=3, text=song.release_date[0:4]))
-  meta.save()
+def setID3(path, song):
+  tags = ID3(path)
+  tags.delete()
+  tags.add(TIT2(encoding=3, text=song.track))
+  tags.add(TPE1(encoding=3, text=song.artist))
+  tags.add(TPE2(encoding=3, text=song.artist))
+  tags.add(TALB(encoding=3, text=song.album))
+  tags.add(TCON(encoding=3, text=song.genre))
+  tags.add(TRCK(encoding=3, text=song.track_number+'/'+song.track_count))
+  tags.add(TPOS(encoding=3, text=song.disc_number+'/'+song.disc_count))
+  tags.add(TDRC(encoding=3, text=song.release_date[0:4]))
   # Embed cover-art in ID3 metadata
-  meta = MP3(path, ID3=ID3)
-  img_url = song.artwork_url
-  directory = Path.home()/'Downloads'/'Music'/'CoverArt'
-  os.system('mkdir -p %s' % (directory))
-  img_path = os.path.join(directory, 'cover.jpg')
+  img_url = '/'.join(song.artwork_url.split('/')[:-1])+'/480x480bb.jpg'
+  img_path = Path.home()/'Downloads'/'Music'/'CoverArt'
+  if not os.path.exists(img_path):
+    os.makedirs(img_path)
+  img_path = os.path.join(img_path, 'cover.jpg')
   response = requests.get(img_url)
-  img = Image.open(io.BytesIO(response.content))
-  img.save(img_path)
-  meta.tags.add(APIC(encoding=3, mime='image/jpg', type=3,
-                     desc=u'Cover', data=open(img_path, 'rb').read()))
-  meta.save()
-  shutil.rmtree(directory)
+  Image.open(io.BytesIO(response.content)).save(img_path)
+  tags.add(APIC(encoding=3, mime='image/jpg', type=3,
+                desc=u'Cover', data=open(img_path, 'rb').read()))
+  tags.save()
+  shutil.rmtree(Path(img_path).parent)
 
 # Display a download progress bar
 def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
@@ -182,10 +180,10 @@ def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
 
 
 class Song(object):
+
   def __init__(self, data):
     self.track = data['track_name']
     self.artist = data['artist_name']
-    self.video_url = data['video_url']
     self.album = data['collection_name']
     self.genre = data['primary_genre_name']
     self.artwork_url = data['artwork_url_100']
@@ -194,3 +192,4 @@ class Song(object):
     self.disc_count = str(data['disc_count'])
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
+    self.video_url = data['video_url']

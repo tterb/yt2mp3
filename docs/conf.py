@@ -39,11 +39,9 @@ release = u''
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
+    'sphinx.ext.doctest',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
 ]
 
 autosummary_generate = True
@@ -158,8 +156,3 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/3/': None}
-
-# -- Options for todo extension ----------------------------------------------
-
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True

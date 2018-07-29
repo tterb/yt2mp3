@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and converting
-Youtube videos to MP3 files with embedded metadata via the iTunes API.
+A program that simplifies the process of searching, downloading and
+converting Youtube videos to MP3 files with embedded metadata via the
+iTunes API.
 bin/yt2mp3
 Brett Stevenson (c) 2018
 """
@@ -28,7 +29,7 @@ def main():
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
     queue = yt2mp3.getVideoList(url)
-    yt2mp3.downloadPlaylist(queue, args.overwrite)
+    yt2mp3.downloadPlaylist(queue, args.verbose, args.overwrite)
     sys.exit()
   elif args.url:
     url = args.url
@@ -60,7 +61,7 @@ def main():
     if not data['track_name'] and not data['artist_name'] or not result:
       logging.warning('Sorry, no results were found.')
       sys.exit()
-    url = yt2mp3.getURL(data['track_name'], data['artist_name'])
+    url = yt2mp3.getVideoURL(data['track_name'], data['artist_name'])
   if result:
     data = defaultdict(str, result.__dict__)
   data['video_url'] = url
@@ -68,9 +69,9 @@ def main():
   if not args.overwrite and yt2mp3.fileExists(song):
     logging.info('This song already exists in the output directory')
     sys.exit()
-  temp_path = yt2mp3.download(song.video_url, args.verbose)
-  path = yt2mp3.convertToMP3(temp_path, song)
-  yt2mp3.setData(path, song)
+  video = yt2mp3.download(song.video_url, args.verbose)
+  path = yt2mp3.convertToMP3(video, song)
+  yt2mp3.setID3(path, song)
   logging.info(' ✔ Done')
 
 if __name__ == '__main__':
