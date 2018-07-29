@@ -1,0 +1,17 @@
+language: python
+python:
+    - "3.4"
+    - "3.5"
+    - "3.6"
+    - "3.7"
+before_install:
+    - pip install pytest pytest-cov
+    - pip install coveralls
+install:
+    - pip install -r requirements.txt
+    - pip install -e .
+script:
+    # - tox
+    - python3 setup.py test
+after_success:
+    - coveralls
