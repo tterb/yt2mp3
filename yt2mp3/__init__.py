@@ -11,7 +11,6 @@ Brett Stevenson (c) 2018
 import sys, os, re, pytube, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
 from urllib.request import Request, urlopen
 from collections import defaultdict
-from pathlib import Path
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
 from PIL import Image
 from bs4 import BeautifulSoup
@@ -83,13 +82,13 @@ def getVideoURL(track, artist):
 
 # Checks if a duplicate file exists in the output directory
 def fileExists(song):
-  path = Path.home()/'Downloads'/'Music'/song.artist
-  path = Path(path, song.track+'.mp3')
+  path = os.path.expanduser('~/Downloads/Music/')
+  path = os.path.join(path, song.artist, song.track+'.mp3')
   return os.path.exists(path)
 
 # Downloads the video at the provided url
 def download(url, verbose=False):
-  temp_dir = Path.home()/'Downloads'/'Music'/'temp'
+  temp_dir = os.path.expanduser('~/Downloads/Music/temp/')
   if not os.path.exists(temp_dir):
     os.makedirs(temp_dir)
   video_id = url.split('watch?v=')[-1]
@@ -99,7 +98,7 @@ def download(url, verbose=False):
     youtube.register_on_progress_callback(showProgressBar)
   youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
   logging.info(' ✔ Download Complete')
-  return Path(temp_dir, video_id+'.mp4')
+  return os.path.join(temp_dir, video_id+'.mp4')
 
 # Returns a list of video URLs in playlist
 def getVideoList(url):
@@ -108,7 +107,7 @@ def getVideoList(url):
   return video_list
 
 # Downloads each of the songs from the playlist
-def downloadPlaylist(videos, verbose, overwrite):
+def downloadPlaylist(videos, verbose=False, overwrite=False):
   for i, url in enumerate(videos):
     title = getVideoTitle(url)
     logging.info('%s of %s: %s', (i+1), len(videos), title)
@@ -127,20 +126,21 @@ def downloadPlaylist(videos, verbose, overwrite):
     else:
       song = Song(data)
     if overwrite or not fileExists(song):
-      temp_path = download(url, verbose)
-      path = convertToMP3(temp_path, song)
-      setID3(path, song)
+      video_path = download(url, verbose)
+      song_path = convertToMP3(video_path, song)
+      setID3(song_path, song)
   logging.info(' ✔ Done')
 
 # Convert the downloaded video file to MP3
 def convertToMP3(video, song):
   logging.info(' ♬ Converting to MP3')
-  artist_dir = Path.home()/'Downloads'/'Music'/song.artist
+  artist_dir = os.path.expanduser('~/Downloads/Music/')
+  artist_dir = os.path.join(artist_dir, song.artist)
   if not os.path.exists(artist_dir):
     os.makedirs(artist_dir)
   song_path = os.path.join(artist_dir, song.track+'.mp3')
   pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
-  shutil.rmtree(Path(video).parent)
+  shutil.rmtree(os.path.dirname(video))
   return song_path
 
 # Sets the ID3 metadata of the MP3 file
@@ -157,7 +157,7 @@ def setID3(path, song):
   tags.add(TDRC(encoding=3, text=song.release_date[0:4]))
   # Embed cover-art in ID3 metadata
   img_url = '/'.join(song.artwork_url.split('/')[:-1])+'/480x480bb.jpg'
-  img_path = Path.home()/'Downloads'/'Music'/'CoverArt'
+  img_path = os.path.expanduser('~/Downloads/Music/CoverArt')
   if not os.path.exists(img_path):
     os.makedirs(img_path)
   img_path = os.path.join(img_path, 'cover.jpg')
@@ -166,7 +166,7 @@ def setID3(path, song):
   tags.add(APIC(encoding=3, mime='image/jpg', type=3,
                 desc=u'Cover', data=open(img_path, 'rb').read()))
   tags.save()
-  shutil.rmtree(Path(img_path).parent)
+  shutil.rmtree(os.path.dirname(img_path))
 
 # Display a download progress bar
 def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
