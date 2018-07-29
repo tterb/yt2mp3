@@ -1,7 +1,7 @@
 import setuptools
 
 with open('README.md') as f:
-    long_description = f.read()
+  long_description = f.read()
 
 setuptools.setup(
   name = 'yt2mp3',
@@ -16,6 +16,8 @@ setuptools.setup(
   keywords = ['youtube', 'convert', 'mp3', 'download', 'itunes', 'music', 'cli'],
   packages = setuptools.find_packages(),
   scripts=['bin/yt2mp3'],
+  setup_requires=['pytest-runner'],
+  tests_require=['pytest'],
   install_requires=[
     'pydub==0.21.0',
     'mutagen==1.40.0',
@@ -30,10 +32,11 @@ setuptools.setup(
   ],
   classifiers = [
     'Development Status :: 4 - Beta',
-    'Programming Language :: Python :: 3.4', 'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5', 
     'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
     'License :: OSI Approved :: MIT License',
-    'Operating System :: OS Independent',
-    'Natural Language :: English'
-  ],
+    'Operating System :: OS Independent'
+  ]
 )
