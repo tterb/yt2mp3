@@ -2,8 +2,9 @@ import os.path, pytest, yt2mp3, shutil
 from mutagen.id3 import ID3
 from collections import defaultdict
 
+
 @pytest.fixture
-def song_data():
+def test_data():
     return { 'artist_name': 'The Jimi Hendrix Experience',
              'collection_name': 'Experience Hendrix: The Best of Jimi Hendrix',
              'primary_genre_name': 'Rock',
@@ -18,29 +19,30 @@ def test_song():
     return yt2mp3.Song(data)
     
 
-def test_get_song_data(song_data):
+def test_get_song_data(test_data):
     data = yt2mp3.getSongData('Bold as Love', 'Jimi Hendrix')
     data = defaultdict(str, data.__dict__)
-    assert [song_data[key] == data[key] for key in song_data.keys()]
+    assert [test_data[key] == data[key] for key in test_data.keys()]
 
 def test_get_video_URL():
     url = yt2mp3.getVideoURL('Bold as Love', 'Jimi Hendrix')
     assert len(url.split('watch?v=')) == 2
 
-def test_video_title():
-    url = 'https://www.youtube.com/watch?v=C0DPdy98e4c'
+def test_video_data(test_data):
+    url = 'https://www.youtube.com/watch?v=gkJhnDkdC-0'
     title = yt2mp3.getVideoTitle(url)
-    assert title == 'TEST VIDEO'
-
-def test_video_data(): # TODO
-    url = 'https://www.youtube.com/watch?v=M6UlXZxch-A'
-    data = yt2mp3.getVideoData('RAMONES - Havana Affair')
-    # TODO
+    data = yt2mp3.getVideoData(title).__dict__
+    assert [test_data[key] == data[key] for key in test_data.keys()]
 
 def test_video_download(test_song):
     video_path = yt2mp3.download(test_song.video_url)
     assert os.path.exists(video_path)
-    
+
+def test_video_download_verbose():
+    url = 'https://www.youtube.com/watch?v=C0DPdy98e4c'
+    video_path = yt2mp3.download(url, True)
+    assert os.path.exists(video_path)
+
 def test_convert_mp3(test_song):
     errors = []
     video_dir = os.path.expanduser('~/Downloads/Music/temp/')
@@ -51,7 +53,10 @@ def test_convert_mp3(test_song):
     if os.path.exists(video_path):
         errors.append('The video file wasn\'t deleted after conversion')
     assert not errors, 'errors occured:\n{}'.format('\n'.join(errors))
-    
+
+def test_file_check(test_song):
+    assert yt2mp3.fileExists(test_song)
+
 def test_set_id3_tags(test_song):
     errors = []
     path = os.path.expanduser('~/Downloads/Music/')
@@ -71,7 +76,22 @@ def test_set_id3_tags(test_song):
 def test_get_playlist_videos():
     url = 'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
     playlist = yt2mp3.getVideoList(url)
-    assert yt2mp3.getVideoList(url) == ['https://www.youtube.com/watch?v=_FrOQC-zEog','https://www.youtube.com/watch?v=yvPr9YV7-Xw','https://www.youtube.com/watch?v=-EzURpTF5c8']
+    assert yt2mp3.getVideoList(url) == ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'https://www.youtube.com/watch?v=_FrOQC-zEog', 'https://www.youtube.com/watch?v=yvPr9YV7-Xw']
+
+# def test_playlist_download():
+#     url = 'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
+#     videos = yt2mp3.getVideoList(url)
+#     yt2mp3.downloadPlaylist(videos)
+#     dir = os.path.expanduser('~/Downloads/Music/temp/')
+#     file_count = len([video for video in os.listdir(dir) if os.path.isfile(video)])
+#     assert file_count == 3
+
+def test_lookup_failure():
+    with pytest.raises(SystemExit) as err:
+        yt2mp3.getSongData('nomatch', 'test')
+    assert err.type == SystemExit
+    # with pytest.raises(LookupError):
+    #     yt2mp3.getSongData('nomatch', 'test', True)
 
 def test_cleanup(test_song):
     errors = []
