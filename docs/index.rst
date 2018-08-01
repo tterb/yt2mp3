@@ -6,6 +6,10 @@
 yt2mp3
 ========  
 
+.. image:: https://travis-ci.org/tterb/yt2mp3.svg?branch=master
+  :target: https://travis-ci.org/tterb/yt2mp3
+  :alt: Build Status
+
 .. image:: https://img.shields.io/pypi/v/yt2mp3.svg
  :target: https://pypi.python.org/pypi/yt2mp3/
  :alt: Pypi
@@ -29,7 +33,7 @@ A program that simplifies the process of searching, downloading and converting Y
 Overview
 ^^^^^^^^^^
 
-All you need is the video URL or the name of the artist/track you're looking for. The program will then attempt to retrieve data for a song by matching the provided input by querying the iTunes API and find a corresponding YouTube video, if a URL is not provided. The video will then be downloaded, converted, and the gathered data will be used to populate the metadata of the MP3.   
+All you need is the video URL or the name of the artist/track you're looking for, the program will then attempt to retrieve data for a song by matching the provided input by querying the iTunes API and find a corresponding YouTube video, if one isn't provided. The video will then be downloaded, converted, and the gathered data will be used to populate the metadata of the MP3.   
 
 Once finished, the resulting MP3 file will be saved to your *Downloads* directory, with the following file-structure ``Music/{artist}/{track}.mp3``.
 

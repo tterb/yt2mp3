@@ -14,7 +14,7 @@ The program can be executed via the command-line as follows:
   :alt: Usage Example
 
 Options
-^^^^^^^^^
+--------------
 
 +----------------------+------------------------------------------------------------+
 | ``-t, --track``     | Specify the track name query                          |

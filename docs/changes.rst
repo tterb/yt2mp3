@@ -1,14 +1,18 @@
 Changelog  
 ==============
 
-.. Version 1.1.0 
-.. ---------------- 
-.. 
-.. * Added support for playlists
-.. * Improved command-line option functionality  
-.. * Added duplicate check and overwrite command-line option
-.. 
-.. --------------------------------  
+Version 1.1.0 
+---------------- 
+
+* Added support for playlists
+* Improved command-line option functionality  
+* Added duplicate check and overwrite command-line option
+* Added Travis CI integration testing
+* Improved cover-art resolution
+* Improved compatibility for Python < 3.6 versions
+* Improved ID3 tag embedding processes
+
+--------------------------------  
 
 Version 1.0.5  
 ----------------

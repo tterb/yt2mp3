@@ -28,12 +28,12 @@ Enhancements & Feature Requests
 
 Users provide the best insight for improving a product. So always feel free to suggest improvements, feedback, and give the developers an idea of what new features you'd like to see in the future.  
 **Don't forget, this is one of the greatest benefits of open-source development!**  
- If you'd like to submit an enhancement request, please include the following information:
- * Current project version (check that you are using the latest version)
- * How would this enhancement benefit most users?
- * Do you have any examples of other applications that feature this enhancement?
- * Relevant details about your configuration and environment.
- * **Note:** Don't forget to tag your post with the *Enhancement* label.
+If you'd like to submit an enhancement request, please include the following information:
+* Current project version (check that you are using the latest version)
+* How would this enhancement benefit most users?
+* Do you have any examples of other applications that feature this enhancement?
+* Relevant details about your configuration and environment.
+* **Note:** Don't forget to tag your post with the *Enhancement* label.
 
 
 Pull Requests  
