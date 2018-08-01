@@ -12,7 +12,7 @@ setuptools.setup(
   author = 'Brett Stevenson',
   author_email = 'bstevensondev@gmail.com',
   url = 'https://github.com/tterb/yt2mp3',
-  download_url = 'https://github.com/tterb/yt2mp3/archive/1.0.5.tar.gz',
+  download_url = 'https://github.com/tterb/yt2mp3/archive/1.1.0.tar.gz',
   keywords = ['youtube', 'convert', 'mp3', 'download', 'itunes', 'music', 'cli'],
   packages = setuptools.find_packages(),
   scripts=['bin/yt2mp3'],
