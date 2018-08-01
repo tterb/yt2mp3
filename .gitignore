@@ -6,7 +6,6 @@
 # Icon must end with two \r
 Icon
 
-
 # Thumbnails
 ._*
 
@@ -19,10 +18,22 @@ Icon
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
 
-# PyPi
-build/*
-dist/*
-yt2mp3.egg-info/*
+**/__pycache__/
+.pytest_cache/
+env/
 
-# Other
-test.sh
+# PyPi
+build/
+dist/
+yt2mp3.egg-info/
+.eggs/
+lib/
+
+# ReadTheDocs
+docs/_build/
+docs/_static/
+docs/_template/
+
+# Testing
+.coverage
+tox.ini
