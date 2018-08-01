@@ -2,7 +2,6 @@ import os.path, pytest, yt2mp3, shutil
 from mutagen.id3 import ID3
 from collections import defaultdict
 
-
 @pytest.fixture
 def test_data():
     return { 'artist_name': 'The Jimi Hendrix Experience',
@@ -78,20 +77,10 @@ def test_get_playlist_videos():
     playlist = yt2mp3.getVideoList(url)
     assert yt2mp3.getVideoList(url) == ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'https://www.youtube.com/watch?v=_FrOQC-zEog', 'https://www.youtube.com/watch?v=yvPr9YV7-Xw']
 
-# def test_playlist_download():
-#     url = 'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
-#     videos = yt2mp3.getVideoList(url)
-#     yt2mp3.downloadPlaylist(videos)
-#     dir = os.path.expanduser('~/Downloads/Music/temp/')
-#     file_count = len([video for video in os.listdir(dir) if os.path.isfile(video)])
-#     assert file_count == 3
-
 def test_lookup_failure():
     with pytest.raises(SystemExit) as err:
         yt2mp3.getSongData('nomatch', 'test')
     assert err.type == SystemExit
-    # with pytest.raises(LookupError):
-    #     yt2mp3.getSongData('nomatch', 'test', True)
 
 def test_cleanup(test_song):
     errors = []
