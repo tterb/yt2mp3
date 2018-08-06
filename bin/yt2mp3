@@ -8,39 +8,27 @@ bin/yt2mp3
 Brett Stevenson (c) 2018
 """
 
-import sys, logging, argparse, yt2mp3
+import sys, logging, argparse
 from collections import defaultdict
+from yt2mp3 import util, opts
+from yt2mp3.song import Song
 
 def main():
-  parser = argparse.ArgumentParser(prog='yt2mp3', usage='%(prog)s [options]', add_help=True)
-  parser.add_argument('--version', action='version', version='v1.0.5', help='show the program version number and exit')
-  parser.add_argument('-t', '--track', default='', help='Specify the track name query', nargs='+')
-  parser.add_argument('-a', '--artist', default='', help='specify the artist name query', nargs='+')
-  parser.add_argument('-u', '--url', help='specify the YouTube URL/ID of the video to convert')
-  parser.add_argument('-p', '--playlist', help='specify the YouTube URL/ID of the playlist to convert')
-  parser.add_argument('-o', '--overwrite', help='overwrite file if one exists in output directory', action='store_true')
-  parser.add_argument('-v', '--verbose', help='display a download progress bar', action='store_true')
-  parser.add_argument('-q', '--quiet', help='suppress command-line output', action='store_true')
-  args = parser.parse_args()
+  # Get command-line options
+  args = opts.getOptions()
   # Set logging level
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
-
+  queue = list()
   data = defaultdict(str)
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-    queue = yt2mp3.getVideoList(url)
-    yt2mp3.downloadPlaylist(queue, args.verbose, args.overwrite)
-    sys.exit()
+    queue = util.getVideoList(url)
+    # util.downloadPlaylist(queue, args.verbose, args.overwrite)
+    # sys.exit()
   elif args.url:
-    url = args.url
-    if len(url) <= 12:
-      url = 'https://www.youtube.com/watch?v='+url
-    result = yt2mp3.getVideoData(yt2mp3.getVideoTitle(url))
-    if not result:
-      data['track_name'] = input(' Track: ')
-      data['artist_name'] = input(' Artist: ')
-      data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
-      result = yt2mp3.getSongData(data['track_name'], data['artist_name'], False)
+    data['video_url'] = args.url
+    if len(data['video_url']) <= 12:
+      data['video_url'] = 'https://www.youtube.com/watch?v='+url
   else:
     # Get song track/artist from user
     if args.track or args.artist:
@@ -49,29 +37,20 @@ def main():
     else:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
-    if data['track_name'] and data['artist_name']:
-      result = yt2mp3.getSongData(data['track_name'], data['artist_name'])
-    elif data['track_name'] or data['artist_name']:
-      songs = yt2mp3.getSongData(data['track_name'], data['artist_name'])
-      if data['track_name']:
-        options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
-      elif data['artist_name']:
-        options = [s.track_name for s in songs]
-      result = songs[yt2mp3.showMenu(options)]
-    if not data['track_name'] and not data['artist_name'] or not result:
-      logging.warning('Sorry, no results were found.')
+  if not args.playlist:
+    queue.append(data['video_url'])
+  for url in queue:
+    if args.playlist:
+      title = util.getVideoTitile(url)
+      logging.info('%s of %s: %s', (i+1), len(queue), title)
+    # data = util.getSongData(data)
+    song = Song(util.getSongData(data))
+    if not args.overwrite and util.fileExists(song.artist, song.track):
+      logging.info('This song already exists in the output directory')
       sys.exit()
-    url = yt2mp3.getVideoURL(data['track_name'], data['artist_name'])
-  if result:
-    data = defaultdict(str, result.__dict__)
-  data['video_url'] = url
-  song = yt2mp3.Song(data)
-  if not args.overwrite and yt2mp3.fileExists(song):
-    logging.info('This song already exists in the output directory')
-    sys.exit()
-  video = yt2mp3.download(song.video_url, args.verbose)
-  path = yt2mp3.convertToMP3(video, song)
-  yt2mp3.setID3(path, song)
+    video = song.download(args.verbose)
+    path = song.convertToMP3(video)
+  song.setID3(path)
   logging.info(' ✔ Done')
 
 
