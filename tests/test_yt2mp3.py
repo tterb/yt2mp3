@@ -1,8 +1,9 @@
 import os, pytest, yt2mp3, shutil
 from mutagen.id3 import ID3
 from collections import defaultdict
-from yt2mp3 import util
+from yt2mp3 import util, opts
 from yt2mp3.song import Song
+from pprint import pprint
 
 @pytest.fixture
 def test_data():
@@ -19,11 +20,31 @@ def test_song():
     data['video_url'] = util.getVideoURL(data['track_name'], data['artist_name'])
     return Song(data)
     
+def test_arguments():
+    errors = []
+    args = opts.parseOptions(['-o', '-v', '-a', 'jimi', 'hendrix', '-t', 'bold', 'as', 'love'])
+    assert args.overwrite
+    assert args.verbose
+    assert not args.quiet
+    assert args.resolution == 480
+    assert ' '.join(args.artist) == 'jimi hendrix'
+    assert ' '.join(args.track) == 'bold as love'
 
 def test_get_song_data(test_data):
-    data = util.getiTunesData('Bold as Love', 'Jimi Hendrix')
-    data = defaultdict(str, data.__dict__)
+    input = defaultdict(str, {'track_name': 'Bold as Love',
+                              'artist_name': 'Jimi Hendrix'})
+    data = defaultdict(str, util.getSongData(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
+    data.clear()
+    input.clear()
+    input['video_url'] = 'https://www.youtube.com/watch?v=gkJhnDkdC-0'
+    data = defaultdict(str, util.getSongData(input))
+    assert [test_data[key] == data[key] for key in test_data.keys()]
+
+def test_itunes_data(test_data):
+    results = util.getiTunesData('bold as love', '')
+    pprint(results[0].__dict__)
+    assert len(results) > 2
 
 def test_get_video_URL():
     url = util.getVideoURL('Bold as Love', 'Jimi Hendrix')
@@ -56,7 +77,7 @@ def test_convert_mp3(test_song):
     assert not errors, 'errors occured:\n{}'.format('\n'.join(errors))
 
 def test_file_check(test_song):
-    assert util.fileExists(test_song.artist, test_song.track)
+    assert test_song.fileExists()
 
 def test_set_id3_tags(test_song):
     errors = []
@@ -83,11 +104,11 @@ def test_lookup_failure():
     with pytest.raises(SystemExit) as err:
         util.getiTunesData('nomatch', 'test')
     assert err.type == SystemExit
-    
+
 def test_overwrite(test_song):
     song_path = os.path.join(os.path.expanduser('~/Downloads/Music/'), test_song.artist, test_song.track+'.mp3')
     assert os.path.exists(song_path)
-    
+
 def test_cleanup(test_song):
     errors = []
     directory = os.path.expanduser('~/Downloads/Music/')
