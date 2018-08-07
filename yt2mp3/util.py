@@ -18,7 +18,7 @@ from yt2mp3.song import Song
 def getSongData(data, overwrite=False):
   if data['video_url']:
     url = data['video_url']
-    title = pytube.YouTube(url)
+    title = pytube.YouTube(url).title
     result = getVideoData(title)
     if not result: 
       data['track_name'] = input(' Track: ')
@@ -63,10 +63,13 @@ def getiTunesData(track, artist, exit_fail=True):
 # Attempt to retrieve song data from the video title
 def getVideoData(title):
   # Remove parenthesis, punctuation and nondescript words
-  regex = r'\([^)]*\)|[[^]]*\]|ft|feat|\blyrics?\b|official|video|audio'
-  keywords = re.sub(re.compile(regex, re.IGNORECASE), '', title)
+  pattern = r'\([^)]*\)|\[[^]]*\]|ft(\.)?|feat(\.)?|\blyrics?\b|official|video|audio|h(d|q)'
+  print(title)
+  keywords = re.sub(pattern, '', str(title), flags=re.I)
   keywords = keywords.translate(str.maketrans('', '', string.punctuation))
   keywords = ' '.join(keywords.split())
+  print(keywords)
+  sys.exit()
   # Query iTunes API
   try:
     return itunespy.search(keywords)[0]
