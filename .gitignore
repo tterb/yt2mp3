@@ -19,13 +19,13 @@ Icon
 .com.apple.timemachine.donotpresent
 
 **/__pycache__/
-.pytest_cache/
 env/
+.python-version
 
 # PyPi
 build/
 dist/
-yt2mp3.egg-info/
+*.egg-info/
 .eggs/
 lib/
 
@@ -35,5 +35,9 @@ docs/_static/
 docs/_template/
 
 # Testing
-.coverage
+tests/**/*
+!tests/test_*
+.pytest_cache/
+.tox/
 tox.ini
+.coverage
