@@ -52,8 +52,21 @@ class Song(object):
     shutil.rmtree(os.path.dirname(video))
     return song_path
     
+  def getCoverArt(self, res):
+    img_url = self.artwork_url
+    if 'youtube' not in img_url:
+      ext = '/%sx%sbb.jpg' % (res, res)
+      img_url = '/'.join(img_url.split('/')[:-1])+ext
+    img_path = os.path.expanduser('~/Downloads/Music/CoverArt')
+    if not os.path.exists(img_path):
+      os.makedirs(img_path)
+    img_path = os.path.join(img_path, 'cover.jpg')
+    response = requests.get(img_url)
+    Image.open(io.BytesIO(response.content)).save(img_path)
+    return img_path
+
   # Sets the ID3 metadata of the MP3 file
-  def setID3(self, path):
+  def setID3(self, path, res=480):
     tags = ID3(path)
     tags.delete()
     tags.add(TIT2(encoding=3, text=self.track))
@@ -65,13 +78,7 @@ class Song(object):
     tags.add(TPOS(encoding=3, text=self.disc_number+'/'+self.disc_count))
     tags.add(TDRC(encoding=3, text=self.release_date[0:4]))
     # Embed cover-art in ID3 metadata
-    img_url = '/'.join(self.artwork_url.split('/')[:-1])+'/480x480bb.jpg'
-    img_path = os.path.expanduser('~/Downloads/Music/CoverArt')
-    if not os.path.exists(img_path):
-      os.makedirs(img_path)
-    img_path = os.path.join(img_path, 'cover.jpg')
-    response = requests.get(img_url)
-    Image.open(io.BytesIO(response.content)).save(img_path)
+    img_path = self.getCoverArt(res)
     tags.add(APIC(encoding=3, mime='image/jpg', type=3,
                   desc=u'Cover', data=open(img_path, 'rb').read()))
     tags.save()
