@@ -1,9 +1,18 @@
+#!/usr/bin/env python3
+"""
+yt2mp3
+A program that simplifies the process of searching, downloading and 
+converting Youtube videos to MP3 files with embedded metadata via the 
+iTunes API.
+yt2mp3/tests/test_yt2mp3.py
+Brett Stevenson (c) 2018
+"""
+
 import os, pytest, yt2mp3, shutil
 from mutagen.id3 import ID3
 from collections import defaultdict
 from yt2mp3 import util, opts
 from yt2mp3.song import Song
-from pprint import pprint
 
 @pytest.fixture
 def test_data():
@@ -43,8 +52,16 @@ def test_get_song_data(test_data):
 
 def test_itunes_data(test_data):
     results = util.getiTunesData('bold as love', '')
-    pprint(results[0].__dict__)
+    # TODO
     assert len(results) > 2
+
+def test_validate_URL():
+    urls = ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'http://youtu.be/gkJhnDkdC-0']
+    playlists = ['https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm', 'https://www.youtube.com/watch?v=gkJhnDkdC-0&list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm', 'https://www.youtube.com/watch?list=PL1F9CA2A03CF286C2&v=pFS4zYWxzNA&']
+    for url in urls:
+        assert util.validateURL(url)
+    for url in playlists:
+        assert util.validateURL(url, True)
 
 def test_get_video_URL():
     url = util.getVideoURL('Bold as Love', 'Jimi Hendrix')
