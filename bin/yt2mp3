@@ -22,13 +22,19 @@ def main(args):
   data = defaultdict(str)
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
+    if not util.validateURL(args.url, playlist=True):
+      logging.warning(' ✘ Unable to validate the provided URL') 
+      sys.exit()
     queue = util.getVideoList(url)
     # util.downloadPlaylist(queue, args.verbose, args.overwrite)
     # sys.exit()
   elif args.url:
     data['video_url'] = args.url
-    if len(data['video_url']) <= 12:
+    if len(data['video_url']) == 11:
       data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
+    if not util.validateURL(args.url):
+      logging.warning(' ✘ Unable to validate the provided URL') 
+      sys.exit()
   else:
     # Get song track/artist from user
     if args.track or args.artist:
@@ -45,13 +51,11 @@ def main(args):
       logging.info('%s of %s: %s', (i+1), len(queue), title)
       data['video_url'] = url
     song = Song(util.getSongData(data))
-    # if not args.overwrite and util.fileExists(song.artist, song.track):
     if not args.overwrite and song.fileExists():
-      logging.info(' ✘ This song already exists in the output directory')
+      logging.warning(' ✘ This song already exists in the output directory')
       sys.exit()
     video = song.download(args.verbose)
     path = song.convertToMP3(video)
-    # img_path = song.getCoverArt(args.resolution)
     song.setID3(path, args.resolution)
   logging.info(' ✔ Done')
 
