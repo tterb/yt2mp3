@@ -51,19 +51,26 @@ Users provide the best insight for improving a product. So always feel free to s
  * Consider starting the commit message with an applicable emoji:
     * :art: `:art:` when improving the format/structure of the code
     * :racehorse: `:racehorse:` when improving performance
-    * :non-potable_water: `:non-potable_water:` when plugging memory leaks
     * :memo: `:memo:` when writing docs
     * :penguin: `:penguin:` when fixing something on Linux
     * :apple: `:apple:` when fixing something on macOS
     * :checkered_flag: `:checkered_flag:` when fixing something on Windows
     * :bug: `:bug:` when fixing a bug
+    * :recycle: `:recycle:` when refactoring code
     * :fire: `:fire:` when removing code or files
-    * :green_heart: `:green_heart:` when fixing the CI build
+    <!-- * :green_heart: `:green_heart:` when fixing the CI build -->
     * :white_check_mark: `:white_check_mark:` when adding tests
     * :lock: `:lock:` when dealing with security
+    * :iphone: `:iphone:` when working on responsive design
+    * :truck: `:truck` when moving or renaming files
+    * :bento: `:bento:` when adding or updating assets
+    * :building_construction: `:building_construction:`when making architectural changes
+    * :wheelchair: `:wheelchair:` when improving accessibility
+    * :construction_worker: `:construction_worker:` when modifying the CI build
+    * :non-potable_water: `:non-potable_water:` when plugging memory leaks
     * :arrow_up: `:arrow_up:` when upgrading dependencies
     * :arrow_down: `:arrow_down:` when downgrading dependencies
-    * :shirt: `:shirt:` when removing linter warnings
+    * :rotating_light: `:rotating_light:` when removing linter warnings
 
 ### Code   
 
