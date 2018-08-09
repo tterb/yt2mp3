@@ -26,8 +26,6 @@ def main(args):
       logging.warning(' ✘ Unable to validate the provided URL') 
       sys.exit()
     queue = util.getVideoList(url)
-    # util.downloadPlaylist(queue, args.verbose, args.overwrite)
-    # sys.exit()
   elif args.url:
     data['video_url'] = args.url
     if len(data['video_url']) == 11:
