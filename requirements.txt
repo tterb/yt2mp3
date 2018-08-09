@@ -6,4 +6,5 @@ setuptools==39.2.0
 itunespy==1.5.5
 pytube==9.2.2
 Pillow==5.1.0
+lxml==4.2.3
 beautifulsoup4==4.6.0
