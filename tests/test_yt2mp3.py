@@ -50,10 +50,15 @@ def test_get_song_data(test_data):
     data = defaultdict(str, util.getSongData(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
 
-def test_itunes_data(test_data):
-    results = util.getiTunesData('bold as love', '')
-    # TODO
-    assert len(results) > 2
+
+def test_itunes_data(test_data):    
+    data, results = defaultdict(str), dict()
+    data['track_name'] = 'bold as love'
+    results['track_name'] = util.getSongData(data)
+    data.clear()
+    data['artist_name'] = 'jimi hendrix'
+    results['artist_name'] = util.getSongData(data)
+    assert [len(results[key]) > 2 for key in results.keys()]
 
 def test_validate_URL():
     urls = ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'http://youtu.be/gkJhnDkdC-0']

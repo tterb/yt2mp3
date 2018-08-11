@@ -2,14 +2,12 @@ language: python
 python:
     - "3.5"
     - "3.6"
-    - "3.7"
 os:
     - linux
-dist: xenial
 sudo: required
+cache: pip
 before_install:
-    - pip install pytest pytest-cov
-    - pip install coveralls
+    - pip install pytest pytest-cov codecov
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:mc3man/trusty-media; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y ffmpeg; fi
@@ -19,4 +17,4 @@ install:
 script:
     - python3 setup.py test
 after_success:
-    - coveralls
+    - codecov
