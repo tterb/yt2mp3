@@ -1,16 +1,17 @@
+==============
 Changelog  
 ==============
 
 Version 1.1.0 
----------------- 
+----------------
 
 * Added support for playlists
 * Improved command-line option functionality  
-* Added duplicate check and overwrite command-line option
-* Added Travis CI integration testing
-* Improved cover-art resolution
-* Improved compatibility for Python < 3.6 versions
-* Improved ID3 tag embedding processes
+* Added duplicate check and overwrite command-line option  
+* Added `Travis CI <https://travis-ci.org/>`_ integration testing  
+* Improved cover-art resolution  
+* Improved compatibility for Python < 3.6 versions  
+* Improved ID3 tag embedding processes  
 
 --------------------------------  
 
@@ -28,7 +29,7 @@ Version 1.0.5
 Version 1.0.2
 ----------------
 
-* Published package to PyPi
+* Published package to `PyPi <https://pypi.org/project/yt2mp3/>`_
 
 --------------------------------  
 

@@ -1,12 +1,13 @@
+==============
 Contributing
 ==============
 
-The following is a set of guidelines for contributing to this project. These are not rules, use your best judgment and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to this project. These are not rules, use your best judgment and feel free to propose changes to this document in a pull request.  
 
 Code of Conduct
 ^^^^^^^^^^^^^^^^^
 
-This project adheres to the Contributor Covenant `code of conduct <http://contributor-covenant.org/version/1/4/>`_. By participating, you are expected to uphold this code. Please report unacceptable behavior to atom@github.com.
+This project adheres to the Contributor Covenant `code of conduct <http://contributor-covenant.org/version/1/4/>`_. By participating, you are expected to uphold this code. Please report unacceptable behavior `here <http://brettstevenson.io/contact>`_.
 
 
 How Can I Contribute?
@@ -17,7 +18,7 @@ Reporting Bugs
 
 This section guides you through submitting a bug report for Atom. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
 
-* Before creating bug reports, please check the `existing issues <http://github.com/JonSn0w/Atomic-Monokai-Syntax/issues>`_ as you might find out that one has already been created by another user.
+* Before creating bug reports, please check the `existing issues <http://github.com/tterb/yt2mp3/issues>`_ as you might find out that one has already been created by another user.
 * When you are creating a bug report, please provide a clear and descriptive title.
 * Please include as many details as possible in your report. Remember, in order to fix the issue, we must first be able to reproduce it.
 * The use of images, GIFs, or any other form of media is not only *allowed*, it's **encouraged**.
@@ -47,7 +48,7 @@ Pull Requests
 * When addressing an existing issue, please include an `issue mention <https://github.com/blog/957-introducing-issue-mentions>`_ in the description of your pull request.
 * End files with a newline.
 * Avoid platform-dependent code on cross-platform applications.
-* Ensure that submitted code follows the style guidlines specified in the [Styleguide](#styleguide) below.  
+* Ensure that submitted code follows the style guidlines specified in the `Styleguide <styleguides>`_ below.  
 
 
 Styleguides  
@@ -59,27 +60,27 @@ Commit Messages
 * Do your best to conform the tense to that of the existing commits. ("Add feature" not "Added feature" or vice versa)
 * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 * Consider starting the commit message with an applicable emoji:
-  * :art: `:art:` when improving the format/structure of the code
-  * :racehorse: `:racehorse:` when improving performance
-  * :memo: `:memo:` when writing docs
-  * :penguin: `:penguin:` when fixing something on Linux
-  * :apple: `:apple:` when fixing something on macOS
-  * :checkered_flag: `:checkered_flag:` when fixing something on Windows
-  * :bug: `:bug:` when fixing a bug
-  * :recycle: `:recycle:` when refactoring code
-  * :fire: `:fire:` when removing code or files
-  * :white_check_mark: `:white_check_mark:` when adding tests
-  * :lock: `:lock:` when dealing with security
-  * :iphone: `:iphone:` when working on responsive design
-  * :truck: `:truck` when moving or renaming files
-  * :bento: `:bento:` when adding or updating assets
-  * :building_construction: `:building_construction:`when making architectural changes
-  * :wheelchair: `:wheelchair:` when improving accessibility
-  * :construction_worker: `:construction_worker:` when modifying the CI build
+  * `:art:` when improving the format/structure of the code
+  * `:racehorse:` when improving performance
+  * `:memo:` when writing docs
+  * `:penguin:` when fixing something on Linux
+  * `:apple:` when fixing something on macOS
+  * `:checkered_flag:` when fixing something on Windows
+  * `:bug:` when fixing a bug
+  * `:recycle:` when refactoring code
+  * `:fire:` when removing code or files
+  * `:white_check_mark:` when adding tests
+  * `:lock:` when dealing with security
+  * `:iphone:` when working on responsive design
+  * `:truck` when moving or renaming files
+  * `:bento:` when adding or updating assets
+  * `:building_construction:`when making architectural changes
+  * `:wheelchair:` when improving accessibility
+  * `:construction_worker:` when modifying the CI build
   * :non-potable_water: `:non-potable_water:` when plugging memory leaks
-  * :arrow_up: `:arrow_up:` when upgrading dependencies
-  * :arrow_down: `:arrow_down:` when downgrading dependencies
-  * :rotating_light: `:rotating_light:` when removing linter warnings
+  * `:arrow_up:` when upgrading dependencies
+  * `:arrow_down:` when downgrading dependencies
+  * `:rotating_light:` when removing linter warnings
 
 Code
 -------  

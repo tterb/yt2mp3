@@ -4,7 +4,7 @@ The following is a set of guidelines for contributing to this project. These are
 
 ### Code of Conduct
 
-This project adheres to the Contributor Covenant [code of conduct](http://contributor-covenant.org/version/1/4/). By participating, you are expected to uphold this code. Please report unacceptable behavior to atom@github.com.
+This project adheres to the Contributor Covenant [code of conduct](http://contributor-covenant.org/version/1/4/). By participating, you are expected to uphold this code. Please report unacceptable behavior [here](http://brettstevenson.io/contact).
 
 ## How Can I Contribute?
 
@@ -12,7 +12,7 @@ This project adheres to the Contributor Covenant [code of conduct](http://contri
 
 This section guides you through submitting a bug report for Atom. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
 
-* Before creating bug reports, please check the [existing issues](http://github.com/JonSn0w/Atomic-Monokai-Syntax/issues) as you might find out that one has already been created by another user.
+* Before creating bug reports, please check the [existing issues](http://github.com/tterb/yt2mp3/issues) as you might find out that one has already been created by another user.
 * When you are creating a bug report, please provide a clear and descriptive title.
 * Please include as many details as possible in your report. Remember, in order to fix the issue, we must first be able to reproduce it.
 * The use of images, GIFs, or any other form of media is not only *allowed*, it's **encouraged**.
@@ -40,7 +40,7 @@ Users provide the best insight for improving a product. So always feel free to s
 * When addressing an existing issue, please include an [issue mention](https://github.com/blog/957-introducing-issue-mentions) in the description of your pull request.
 * End files with a newline.
 * Avoid platform-dependent code on cross-platform applications.
-* Ensure that submitted code follows the style guidlines specified in the [Styleguide](#styleguide) below.  
+* Ensure that submitted code follows the style guidlines specified in the [Styleguide](#styleguides) below.  
 
 
 ## Styleguides  
