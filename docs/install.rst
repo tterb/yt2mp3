@@ -1,7 +1,8 @@
+==========
 Install
-============
+==========
 
-You can install the program with the following command:
+You can install the program with the following command:  
 
 .. code:: bash
 
