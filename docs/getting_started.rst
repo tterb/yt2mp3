@@ -5,7 +5,10 @@ Getting Started
 Prerequisites  
 --------------
 
-The program only requires that you're using Python 3.4+ and have [ffmpeg](https://www.ffmpeg.org/) or `libav <https://www.libav.org/>`_ installed.
+The program only requires that you have Python 3.4+ and `ffmpeg <https://www.ffmpeg.org/>`_ or `libav <https://www.libav.org/>`_ installed. More installation information is available on the `additional setup <http://yt2mp3.rtfd.io>`_ page.
+
+Usage  
+-------
 
 Once installed, the program can be executed via the command-line as follows:
 
@@ -13,11 +16,10 @@ Once installed, the program can be executed via the command-line as follows:
   
   $ yt2mp3 [-options]
 
-
 When finished, you can find the resulting MP3 file in your *Downloads* directory, with the following file-structure ``Music/{artist}/{track}.mp3``.
 
 Options
---------------
+^^^^^^^^
 
 .. list-table::
   :widths: 25 75
