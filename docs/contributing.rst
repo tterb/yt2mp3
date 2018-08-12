@@ -2,12 +2,12 @@
 Contributing
 ==============
 
-The following is a set of guidelines for contributing to this project. These are not rules, use your best judgment and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to this project. These are not rules, use your best judgment and feel free to propose changes to this document in a pull request.  
 
 Code of Conduct
 ^^^^^^^^^^^^^^^^^
 
-This project adheres to the Contributor Covenant `code of conduct <http://contributor-covenant.org/version/1/4/>`_. By participating, you are expected to uphold this code. Please report unacceptable behavior to atom@github.com.
+This project adheres to the Contributor Covenant `code of conduct <http://contributor-covenant.org/version/1/4/>`_. By participating, you are expected to uphold this code. Please report unacceptable behavior `here <http://brettstevenson.io/contact>`_.
 
 
 How Can I Contribute?
@@ -48,7 +48,7 @@ Pull Requests
 * When addressing an existing issue, please include an `issue mention <https://github.com/blog/957-introducing-issue-mentions>`_ in the description of your pull request.
 * End files with a newline.
 * Avoid platform-dependent code on cross-platform applications.
-* Ensure that submitted code follows the style guidlines specified in the [Styleguide](#styleguide) below.  
+* Ensure that submitted code follows the style guidlines specified in the `Styleguide <styleguides>`_ below.  
 
 
 Styleguides  
