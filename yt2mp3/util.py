@@ -25,9 +25,9 @@ def getSongData(data):
       data['artist_name'] = input(' Artist: ')
       data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
       result = getiTunesData(data['track_name'], data['artist_name'], False)
-      if result: 
-        data = defaultdict(str, result.__dict__)
-        data['video_url'] = url
+    if result: 
+      data = defaultdict(str, result.__dict__)
+      data['video_url'] = url
   elif data['artist_name'] and data['track_name']:
     result = getiTunesData(data['track_name'], data['artist_name'])
     if result: 
