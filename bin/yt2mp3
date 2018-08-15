@@ -22,7 +22,7 @@ def main(args):
   data = defaultdict(str)
   if args.playlist:
     url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-    if not util.validateURL(args.url, playlist=True):
+    if not util.validateURL(url, bool(args.playlist)):
       logging.warning(' ✘ Unable to validate the provided URL') 
       sys.exit()
     queue = util.getVideoList(url)
@@ -51,6 +51,8 @@ def main(args):
     song = Song(util.getSongData(data))
     if not args.overwrite and song.fileExists():
       logging.warning(' ✘ This song already exists in the output directory')
+      if args.playlist:
+          continue
       sys.exit()
     video = song.download(args.verbose)
     path = song.convertToMP3(video)
