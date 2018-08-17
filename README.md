@@ -17,7 +17,7 @@
 </p>  
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/16360374/42410056-a417e33e-8198-11e8-8c43-f60b6a6037dc.gif" width="750"/>
+  <img src="https://cdn.rawgit.com/tterb/yt2mp3/d96b8c70/docs/images/terminal.svg" width="750"/>
 </p>
 
 ## Description  
@@ -27,7 +27,12 @@ Once finished, the resulting MP3 file will be saved to your *Downloads* director
 
 ***Note:*** If a URL is provided and no match is found for the song data, the program will prompt the user for the track/artist and the YouTube thumbnail will be used as the album artwork.  
 
-## Install  
+## Getting Started
+
+### Prerequisites  
+The program only requires that you have Python 3.4+ and [ffmpeg](https://www.ffmpeg.org/) or [libav](https://www.libav.org/) installed. For more information, check out the [additional setup](https://yt2mp3.readthedocs.io/en/latest/additional_setup.html).
+
+### Install  
 You can install the program with the following command:  
 ```sh
 $ pip install yt2mp3
