@@ -1,6 +1,16 @@
-import os, io, pydub, pytube, requests, logging, shutil
-from PIL import Image
+#!/usr/bin/env python3
+"""
+yt2mp3
+A program that simplifies the process of searching, downloading and 
+converting Youtube videos to MP3 files with embedded metadata via the 
+iTunes API.
+yt2mp3/song.py
+Brett Stevenson (c) 2018
+"""
+
+import os, io, pydub, pytube, requests, logging
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
+from PIL import Image
 from yt2mp3 import util
 
 class Song(object):
@@ -49,9 +59,9 @@ class Song(object):
       os.makedirs(artist_dir)
     song_path = os.path.join(artist_dir, self.track+'.mp3')
     pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
-    shutil.rmtree(os.path.dirname(video))
     return song_path
-    
+  
+  # Generates cover-art URL with the specified resolution
   def getCoverArt(self, res):
     img_url = self.artwork_url
     if 'youtube' not in img_url:
@@ -82,7 +92,6 @@ class Song(object):
     tags.add(APIC(encoding=3, mime='image/jpg', type=3,
                   desc=u'Cover', data=open(img_path, 'rb').read()))
     tags.save()
-    shutil.rmtree(os.path.dirname(img_path))
 
   # Checks if a duplicate file exists in the output directory
   def fileExists(self):

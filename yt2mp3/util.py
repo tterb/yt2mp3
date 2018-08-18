@@ -14,12 +14,11 @@ from collections import defaultdict
 from bs4 import BeautifulSoup
 from yt2mp3.song import Song
 
-
+# Uses the provided data to find a match in iTunes API
 def getSongData(data):
   if data['video_url']:
     url = data['video_url']
-    title = pytube.YouTube(url).title
-    result = getVideoData(title)
+    result = getVideoData(getVideoTitle(url))
     if not result: 
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
@@ -44,7 +43,7 @@ def getSongData(data):
     data['video_url'] = getVideoURL(data['track_name'], data['artist_name'])
   return data
 
-# Get song data from iTunes API
+# Attempt to retrieve song data from iTunes API
 def getiTunesData(track, artist, exit_fail=True):
   try:
     if track and artist:
@@ -82,6 +81,7 @@ def getVideoData(title):
   except LookupError:
     pass
 
+# Ensures the validity of provided YouTube URLs
 def validateURL(url, playlist=False):
   pattern = r'^(https?\:\/\/)?(www\.)?(youtube\.com\/watch\?v=([a-zA-Z0-9_\-]{11})|youtu\.?be\/([a-zA-Z0-9_\-]{11}))$'
   if playlist:
@@ -100,7 +100,7 @@ def showMenu(options):
     sys.exit()
   return selection
 
-# Scrapes YouTube for a video with the track and artist
+# Scrapes YouTube for a video containing the track and artist
 def getVideoURL(track, artist):
   query = urllib.parse.quote(track+" "+artist)
   url = 'https://www.youtube.com/results?search_query=' + query
@@ -118,7 +118,7 @@ def getVideoList(url):
   video_list = ['https://www.youtube.com'+i for i in youtube.parse_links()]
   return video_list
 
-# Display a download progress bar
+# Displays a download progress bar
 def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
   total = stream.filesize
   current = ((total-bytes_remaining)/total)
@@ -127,3 +127,13 @@ def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
   status = '█' * progress + '-' * (50 - progress)
   sys.stdout.write(' ↳ |{bar}| {percent}%\r'.format(bar=status, percent=percent))
   sys.stdout.flush()
+
+# Removes temporary video and cover-art files 
+def cleanup():
+  directory = os.path.expanduser('~/Downloads/Music/')
+  video_dir = os.path.join(directory, 'temp/')
+  cover_dir = os.path.join(directory, 'CoverArt/')
+  if os.path.isdir(video_dir):
+    shutil.rmtree(video_dir)
+  if os.path.isdir(cover_dir):
+    shutil.rmtree(cover_dir)
