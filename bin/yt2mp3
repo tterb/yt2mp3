@@ -20,43 +20,49 @@ def main(args):
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
   queue = list()
   data = defaultdict(str)
-  if args.playlist:
-    url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-    if not util.validateURL(url, bool(args.playlist)):
-      logging.warning(' ✘ Unable to validate the provided URL') 
-      sys.exit()
-    queue = util.getVideoList(url)
-  elif args.url:
-    data['video_url'] = args.url
-    if len(data['video_url']) == 11:
-      data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
-    if not util.validateURL(args.url):
-      logging.warning(' ✘ Unable to validate the provided URL') 
-      sys.exit()
-  else:
-    # Get song track/artist from user
-    if args.track or args.artist:
-      data['track_name'] = ' '.join(args.track)
-      data['artist_name'] = ' '.join(args.artist)
-    else:
-      data['track_name'] = input(' Track: ')
-      data['artist_name'] = input(' Artist: ')
-  if not args.playlist:
-    queue.append(data['video_url'])
-  for i,url in enumerate(queue):
+  try:
     if args.playlist:
-      title = util.getVideoTitle(url)
-      logging.info('%s of %s: %s', (i+1), len(queue), title)
-      data['video_url'] = url
-    song = Song(util.getSongData(data))
-    if not args.overwrite and song.fileExists():
-      logging.warning(' ✘ This song already exists in the output directory')
+      url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
+      if not util.validateURL(url, bool(args.playlist)):
+        logging.warning(' ✘ Unable to validate the provided URL') 
+        sys.exit()
+      queue = util.getVideoList(url)
+    elif args.url:
+      data['video_url'] = args.url
+      if len(data['video_url']) == 11:
+        data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
+      if not util.validateURL(args.url):
+        logging.warning(' ✘ Unable to validate the provided URL') 
+        sys.exit()
+    else:
+      # Get song track/artist from user
+      if args.track or args.artist:
+        data['track_name'] = ' '.join(args.track)
+        data['artist_name'] = ' '.join(args.artist)
+      else:
+        data['track_name'] = input(' Track: ')
+        data['artist_name'] = input(' Artist: ')
+    if not args.playlist:
+      queue.append(data['video_url'])
+    for i,url in enumerate(queue):
       if args.playlist:
-          continue
-      sys.exit()
-    video = song.download(args.verbose)
-    path = song.convertToMP3(video)
-    song.setID3(path, args.resolution)
+        title = util.getVideoTitle(url)
+        logging.info('%s of %s: %s', (i+1), len(queue), title)
+        data['video_url'] = url
+      song = Song(util.getSongData(data))
+      if not args.overwrite and song.fileExists():
+        logging.warning(' ✘ This song already exists in the output directory')
+        if args.playlist:
+            continue
+        sys.exit()
+      video = song.download(args.verbose)
+      path = song.convertToMP3(video)
+      song.setID3(path, args.resolution)
+  # Catch program exit and `ctrl+c` to clean-up temporary files
+  except (KeyboardInterrupt, SystemExit):
+    util.cleanup()
+    sys.exit()
+  util.cleanup()
   logging.info(' ✔ Done')
 
 
