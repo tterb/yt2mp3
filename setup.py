@@ -5,14 +5,14 @@ with open('README.md') as f:
 
 setuptools.setup(
   name = 'yt2mp3',
-  version = '1.1.0',
+  version = '1.2.0',
   description = 'Simplifies the process of searching, downloading and converting Youtube videos to MP3 files',
   long_description=long_description,
   long_description_content_type="text/markdown",
   author = 'Brett Stevenson',
   author_email = 'bstevensondev@gmail.com',
   url = 'https://github.com/tterb/yt2mp3',
-  download_url = 'https://github.com/tterb/yt2mp3/archive/1.1.0.tar.gz',
+  download_url = 'https://github.com/tterb/yt2mp3/archive/1.2.0.tar.gz',
   keywords = ['youtube', 'convert', 'mp3', 'download', 'itunes', 'music', 'cli'],
   packages = setuptools.find_packages(),
   scripts=['bin/yt2mp3'],
@@ -32,7 +32,9 @@ setuptools.setup(
   ],
   classifiers = [
     'Development Status :: 4 - Beta',
-    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
     'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent'
   ]
