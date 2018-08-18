@@ -1,11 +1,27 @@
 # Changelog  
 
+## Version 1.2.0  
+
+  * Improved program file-structure
+  * Added custom cover-art resolution option #16 
+  * Added validation check for YouTube URLs 
+  * Improved command-line option parsing  
+  * Improved program test coverage and logging
+  * Improved cover-art resolution
+  * Improved song data acquisition processes
+  * Integrated [Codecov](https://codecov.io/) code coverage
+  * Improved playlist overwrite handling
+  * Improve temporary file clean-up on `SystemExit` and `KeyboardInterrupt`
+  * Removed unnecessary code/comments
+
+--------------------------------  
+
 ## Version 1.1.0  
 
   * Added support for playlists
   * Improved command-line option functionality  
   * Added duplicate check and overwrite command-line option
-  * Added Travis CI integration testing
+  * Added [Travis CI](https://travis-ci.org/) integration testing
   * Improved cover-art resolution
   * Improved compatibility for Python < 3.6 versions
   * Improved ID3 tag embedding processes
@@ -24,7 +40,7 @@
 
 ## Version 1.0.2
 
-  * Published package to PyPi
+  * Published package to [PyPi](https://pypi.org/project/yt2mp3/)
 
 --------------------------------  
 

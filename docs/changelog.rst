@@ -2,6 +2,23 @@
 Changelog  
 ==============
 
+Version 1.2.0 
+----------------
+
+* Improved program file-structure
+* Added custom cover-art resolution option `#16 <https://github.com/tterb/yt2mp3/issues/16>`_ 
+* Added validation check for YouTube URLs 
+* Improved command-line option parsing  
+* Improved program test coverage and logging
+* Improved cover-art resolution
+* Improved song data acquisition processes
+* Integrated `Codecov <https://codecov.io/>`_ code coverage
+* Improved playlist overwrite handling
+* Improve temporary file clean-up on `SystemExit` and `KeyboardInterrupt`
+* Removed unnecessary code/comments
+
+--------------------------------  
+
 Version 1.1.0 
 ----------------
 
