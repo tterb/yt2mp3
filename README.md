@@ -1,20 +1,21 @@
 # YouTube to MP3
 
 <p align="right">
-<!-- CI Status -->
+  <!-- CI Status -->
   <a href="https://travis-ci.org/tterb/yt2mp3"><img src="https://travis-ci.org/tterb/yt2mp3.svg?branch=master" alt="Build Status"/></a>
   <!--Project version-->
-  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/v/yt2mp3.svg" alt="PyPi Version"/></a>
+  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://badge.fury.io/py/yt2mp3.svg" alt="PyPi Version"/></a>
   <!-- CodeCov -->
   <a href="https://codecov.io/gh/tterb/yt2mp3"><img src="https://codecov.io/gh/tterb/yt2mp3/branch/master/graph/badge.svg"/></a>
   <!-- Docs Status -->
   <a href='https://yt2mp3.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yt2mp3/badge/?version=latest' alt='Documentation Status'/></a>
   <!-- Python version -->
-  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://pypip.in/py_versions/yt2mp3/badge.svg" alt="PyPI Python Versions"/></a>
-  <!-- <a href="http://pepy.tech/badge/yt2mp3"><img src="http://pepy.tech/badge/yt2mp3" alt="Downloads"/></a> -->
+  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/pyversions/yt2mp3.svg" alt="PyPI Python Versions"/></a>
   <!--License-->
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License"/></a>
 </p>  
+
+<br>
 
 <p align="center">
   <img src="https://cdn.rawgit.com/tterb/yt2mp3/d96b8c70/docs/images/terminal.svg" width="750"/>
@@ -63,16 +64,5 @@ $ yt2mp3 [-options]
 ## Documentation  
 Further documentation is available on [Read The Docs](https://yt2mp3.readthedocs.io/en/latest/)
 
-## Development  
-If you'd like to contribute to the project, you can download and install the program with the following commands:  
-
-```sh
-# Clone the repository / most up to date is on saftyBranch
-$ git clone https://github.com/tterb/yt2mp3
-
-# Navigate to the directory
-$ cd yt2mp3
-
-# Install program dependencies
-$ pip install -r requirements.txt
-```
+## Contributing  
+If you'd like to contribute to the project, feel free to submit a pull request and/or suggest a feature enhancement.  
