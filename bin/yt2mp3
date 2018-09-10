@@ -34,7 +34,7 @@ def main(args):
       data['video_url'] = args.url
       if len(data['video_url']) == 11:
         data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
-      if not util.validateURL(args.url):
+      if not util.validateURL(data['video_url']):
         logging.warning(Fore.RED+' ✘ '+Style.RESET_ALL+'Unable to validate the provided URL') 
         sys.exit()
     else:
