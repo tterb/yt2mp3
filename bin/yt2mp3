@@ -10,10 +10,13 @@ Brett Stevenson (c) 2018
 
 import sys, logging, argparse
 from collections import defaultdict
+from colorama import init, Fore, Style
 from yt2mp3 import util, opts
 from yt2mp3.song import Song
 
 def main(args):
+  # Initialize colorama for Windows
+  init()
   # Get command-line options
   args = opts.parseOptions(args)
   # Set logging level
@@ -24,7 +27,7 @@ def main(args):
     if args.playlist:
       url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
       if not util.validateURL(url, bool(args.playlist)):
-        logging.warning(' ✘ Unable to validate the provided URL') 
+        logging.warning(Fore.RED+' ✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
         sys.exit()
       queue = util.getVideoList(url)
     elif args.url:
@@ -32,7 +35,7 @@ def main(args):
       if len(data['video_url']) == 11:
         data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
       if not util.validateURL(args.url):
-        logging.warning(' ✘ Unable to validate the provided URL') 
+        logging.warning(Fore.RED+' ✘ '+Style.RESET_ALL+'Unable to validate the provided URL') 
         sys.exit()
     else:
       # Get song track/artist from user
@@ -42,6 +45,8 @@ def main(args):
       else:
         data['track_name'] = input(' Track: ')
         data['artist_name'] = input(' Artist: ')
+        # data['collection_name'] = input(' Album: ')
+        # print(f'collection: \"{data["collection_name"]}\"')
     if not args.playlist:
       queue.append(data['video_url'])
     for i,url in enumerate(queue):
@@ -51,7 +56,7 @@ def main(args):
         data['video_url'] = url
       song = Song(util.getSongData(data))
       if not args.overwrite and song.fileExists():
-        logging.warning(' ✘ This song already exists in the output directory')
+        logging.warning(Fore.RED+' ✘ '+Style.RESET_ALL+'This song already exists in the output directory')
         if args.playlist:
             continue
         sys.exit()
@@ -63,7 +68,7 @@ def main(args):
     util.cleanup()
     sys.exit()
   util.cleanup()
-  logging.info(' ✔ Done')
+  logging.info(Fore.GREEN+' ✔ '+Style.RESET_ALL+'Done')
 
 
 if __name__ == '__main__':
