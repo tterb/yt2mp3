@@ -1,9 +1,11 @@
 pydub==0.21.0
-mutagen==1.40.0
 curses_menu==0.5.0
-requests==2.18.4
+mutagen==1.40.0
 itunespy==1.5.5
-pytube==9.2.2
-Pillow==5.2.0
+youtube_dl==2018.9.10
+requests==2.18.4
+colorama==0.3.9
+halo==0.0.17
+Pillow==5.3.0
 lxml==4.2.3
 beautifulsoup4==4.6.3
