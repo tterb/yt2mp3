@@ -25,8 +25,8 @@ def test_data():
 
 @pytest.fixture
 def test_song():
-    data = util.getiTunesData('Bold as Love', 'Jimi Hendrix').__dict__
-    data['video_url'] = util.getVideoURL(data['track_name'], data['artist_name'])
+    data = util.getiTunesData({ 'track_name':'Bold as Love', 'artist_name':'Jimi Hendrix' }).__dict__
+    data['video_url'] = util.getVideoURL(data)
     return Song(data)
     
 def test_arguments():
@@ -59,12 +59,13 @@ def test_itunes_data(test_data):
 
 # Test iTunes lookup failure => Program should exit 
 def test_itunes_data_failure():
+    fail_data = { 'track_name':'nomatch', 'artist_name':'test' }
     with pytest.raises(SystemExit) as err:
-        util.getiTunesData('nomatch', 'test')
+        util.getiTunesData(fail_data)
     assert err.type == SystemExit
 
-def test_get_video_URL(test_song):
-    url = util.getVideoURL(test_song.track, test_song.artist)
+def test_get_video_URL(test_data, test_song):
+    url = util.getVideoURL(test_data)
     assert url == test_song.video_url and util.validateURL(url)
 
 def test_validate_URL():
@@ -135,7 +136,7 @@ def test_cleanup(test_song):
     # Remove test mp3 file and artist diectory if empty
     if test_song.fileExists():
         os.remove(song_path)
-    if os.listdir(os.path.dirname(song_path)):
+    if not os.listdir(os.path.dirname(song_path)):
         os.rmdir(os.path.dirname(song_path))
     if os.path.isdir(video_dir):
         errors.append('The temporary video files weren\'t cleaned up')
