@@ -8,8 +8,10 @@ yt2mp3/song.py
 Brett Stevenson (c) 2018
 """
 
-import os, io, pydub, pytube, requests, logging
+import os, io, pydub, youtube_dl, requests, logging
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
+from colorama import init, Fore, Style
+from halo import Halo
 from PIL import Image
 from yt2mp3 import util
 
@@ -35,6 +37,10 @@ class Song(object):
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
     self.video_url = data['video_url']
+  
+  def progress_hook(d):
+    if d['status'] == 'finished':
+      logging.info('Done downloading, now converting ...')  
     
   # Downloads the video at the provided url
   def download(self, verbose=False):
@@ -42,17 +48,26 @@ class Song(object):
     if not os.path.exists(temp_dir):
       os.makedirs(temp_dir)
     video_id = self.video_url.split('watch?v=')[-1]
-    youtube = pytube.YouTube(self.video_url)
+    ydl_opts = dict()
+    ydl_opts['outtmpl'] = temp_dir+'%(id)s.%(ext)s'
+    ydl_opts['format'] = 'bestaudio/best'
+    ydl_opts['quiet'] = True
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
     if verbose:
       logging.info(' Downloading...')
-      youtube.register_on_progress_callback(util.showProgressBar)
-    youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
-    logging.info(' ✔ Download Complete')
-    return os.path.join(temp_dir, video_id+'.mp4')
-    
+      # youtube.register_on_progress_callback(util.showProgressBar)
+    # youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
+    # ydl_opts['outtmpl'] = temp_dir+'%(id)s.%(ext)s'
+    video_info = None
+    with ydl:
+      video_info = ydl.extract_info(self.video_url, download=False)
+      ydl.download([self.video_url])
+    logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Download Complete')
+    return os.path.join(temp_dir, video_id+'.'+video_info['ext'])  
+
   # Convert the downloaded video file to MP3
   def convertToMP3(self, video):
-    logging.info(' ♬ Converting to MP3')
+    logging.info(Fore.BLUE+'♬ '+Style.RESET_ALL+'Converting to MP3')
     artist_dir = os.path.expanduser('~/Downloads/Music/')
     artist_dir = os.path.join(artist_dir, self.artist)
     if not os.path.exists(artist_dir):
