@@ -10,8 +10,9 @@ Brett Stevenson (c) 2018
 
 import os, io, pydub, youtube_dl, requests, logging
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
+from mutagen.easyid3 import EasyID3
 from colorama import init, Fore, Style
-from halo import Halo
+# from halo import Halo
 from PIL import Image
 from yt2mp3 import util
 
@@ -44,6 +45,8 @@ class Song(object):
     
   # Downloads the video at the provided url
   def download(self, verbose=False):
+    # spinner = Halo(text='Downloading', spinner='dots12')
+    # spinner.start()
     temp_dir = os.path.expanduser('~/Downloads/Music/temp/')
     if not os.path.exists(temp_dir):
       os.makedirs(temp_dir)
@@ -63,7 +66,10 @@ class Song(object):
       video_info = ydl.extract_info(self.video_url, download=False)
       ydl.download([self.video_url])
     logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Download Complete')
-    return os.path.join(temp_dir, video_id+'.'+video_info['ext'])  
+    # spinner.succeed('Download Complete')
+    # spinner.stop()
+    path = os.path.join(temp_dir, video_id+'.'+video_info['ext'])
+    return path
 
   # Convert the downloaded video file to MP3
   def convertToMP3(self, video):
@@ -112,4 +118,4 @@ class Song(object):
   def fileExists(self):
     path = os.path.expanduser('~/Downloads/Music/')
     path = os.path.join(path, self.artist, self.track+'.mp3')
-    return os.path.exists(path)
+    return os.path.exists(path):

@@ -12,10 +12,9 @@ import argparse
 
 def parseOptions(args):
   parser = argparse.ArgumentParser(prog='yt2mp3', usage='%(prog)s [options]', add_help=True)
-  parser.add_argument('--version', action='version', version='v1.2.0', help='show the program version number and exit')
+  parser.add_argument('--version', action='version', version='v1.2.3', help='show the program version number and exit')
   parser.add_argument('-t', '--track', nargs='+', help='specify the track name query', default='')
   parser.add_argument('-a', '--artist', nargs='+', help='specify the artist name query', default='')
-  parser.add_argument('-c', '--collection', nargs='+', help='specify the album name query', default='')
   parser.add_argument('-u', '--url', help='specify the YouTube URL/ID of the video to convert')
   parser.add_argument('-p', '--playlist', help='specify the YouTube URL/ID of the playlist to convert')
   parser.add_argument('-r', '--resolution', type=int, help='specify the resolution for the cover-art image', default=480)
