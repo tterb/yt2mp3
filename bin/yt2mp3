@@ -45,8 +45,6 @@ def main(args):
       else:
         data['track_name'] = input(' Track: ')
         data['artist_name'] = input(' Artist: ')
-        # data['collection_name'] = input(' Album: ')
-        # print(f'collection: \"{data["collection_name"]}\"')
     if not args.playlist:
       queue.append(data['video_url'])
     for i,url in enumerate(queue):
