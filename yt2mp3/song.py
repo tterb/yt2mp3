@@ -8,8 +8,10 @@ yt2mp3/song.py
 Brett Stevenson (c) 2018
 """
 
-import os, io, pydub, pytube, requests, logging
+import os, io, pydub, youtube_dl, requests, logging
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
+from mutagen.easyid3 import EasyID3
+from colorama import init, Fore, Style
 from PIL import Image
 from yt2mp3 import util
 
@@ -42,22 +44,32 @@ class Song(object):
     if not os.path.exists(temp_dir):
       os.makedirs(temp_dir)
     video_id = self.video_url.split('watch?v=')[-1]
-    youtube = pytube.YouTube(self.video_url)
+    ydl_opts = dict()
+    ydl_opts['outtmpl'] = temp_dir+'%(id)s.%(ext)s'
+    ydl_opts['format'] = 'bestaudio/best'
+    ydl_opts['quiet'] = True
     if verbose:
-      logging.info(' Downloading...')
-      youtube.register_on_progress_callback(util.showProgressBar)
-    youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
-    logging.info(' ✔ Download Complete')
-    return os.path.join(temp_dir, video_id+'.mp4')
-    
+      ydl_opts['progress_hooks'] = [util.showProgressBar]
+      logging.info(Fore.YELLOW+'↓ '+Style.RESET_ALL+'Downloading...')
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
+    video_info = None
+    with ydl:
+      ydl.download([self.video_url])
+      video_info = ydl.extract_info(self.video_url, download=False)
+    logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Download Complete')
+    path = os.path.join(temp_dir, video_id+'.'+video_info['ext'])
+    return path
+
   # Convert the downloaded video file to MP3
   def convertToMP3(self, video):
-    logging.info(' ♬ Converting to MP3')
+    logging.info(Fore.BLUE+'♬ '+Style.RESET_ALL+'Converting to MP3')
     artist_dir = os.path.expanduser('~/Downloads/Music/')
-    artist_dir = os.path.join(artist_dir, self.artist)
+    artist_dir = os.path.join(artist_dir, self.artist.replace('/',''))
     if not os.path.exists(artist_dir):
       os.makedirs(artist_dir)
     song_path = os.path.join(artist_dir, self.track+'.mp3')
+    if os.path.exists(song_path):
+      song_path = song_path[:-4]+'('+self.album+').mp3'
     pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
     return song_path
   
@@ -96,5 +108,5 @@ class Song(object):
   # Checks if a duplicate file exists in the output directory
   def fileExists(self):
     path = os.path.expanduser('~/Downloads/Music/')
-    path = os.path.join(path, self.artist, self.track+'.mp3')
+    path = os.path.join(path, self.artist.replace('/',''), self.track+'.mp3')
     return os.path.exists(path)

@@ -59,8 +59,6 @@ $ yt2mp3 [-options]
 | `--version`       | Show the version number and exit                      |
 | `-h, --help`      | Display information on usage and functionality        |  
 
-***Note:*** Displaying the progress bar with the `-v, --verbose` flag currently has a significant impact on download performance, due to [#180](https://github.com/nficano/pytube/issues/180).  
-
 ## Documentation  
 Further documentation is available on [Read The Docs](https://yt2mp3.readthedocs.io/en/latest/)
 

@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setuptools.setup(
   name = 'yt2mp3',
-  version = '1.2.0',
+  version = '1.2.3',
   description = 'Simplifies the process of searching, downloading and converting Youtube videos to MP3 files',
   long_description=long_description,
   long_description_content_type="text/markdown",
@@ -24,11 +24,13 @@ setuptools.setup(
     'curses_menu==0.5.0',
     'requests==2.18.4',
     'setuptools==39.2.0',
+    'youtube_dl==2018.9.10',
     'itunespy==1.5.5',
-    'pytube==9.2.2',
-    'Pillow==5.1.0',
+    'colorama==0.3.9',
+    'halo==0.0.17',
+    'Pillow==5.3.0',
     'lxml==4.2.3',
-    'beautifulsoup4==4.6.0'
+    'beautifulsoup4==4.6.3'
   ],
   classifiers = [
     'Development Status :: 4 - Beta',
