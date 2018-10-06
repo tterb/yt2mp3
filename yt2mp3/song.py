@@ -113,4 +113,4 @@ class Song(object):
   def fileExists(self):
     path = os.path.expanduser('~/Downloads/Music/')
     path = os.path.join(path, self.artist, self.track+'.mp3')
-    return os.path.exists(path):
+    return os.path.exists(path)
