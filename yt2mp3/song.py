@@ -12,7 +12,6 @@ import os, io, pydub, youtube_dl, requests, logging
 from mutagen.id3 import ID3, APIC, TIT2, TPE1, TPE2, TALB, TCON, TRCK, TDRC, TPOS
 from mutagen.easyid3 import EasyID3
 from colorama import init, Fore, Style
-# from halo import Halo
 from PIL import Image
 from yt2mp3 import util
 
