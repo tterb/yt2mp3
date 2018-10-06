@@ -45,8 +45,6 @@ class Song(object):
     
   # Downloads the video at the provided url
   def download(self, verbose=False):
-    # spinner = Halo(text='Downloading', spinner='dots12')
-    # spinner.start()
     temp_dir = os.path.expanduser('~/Downloads/Music/temp/')
     if not os.path.exists(temp_dir):
       os.makedirs(temp_dir)
@@ -55,19 +53,15 @@ class Song(object):
     ydl_opts['outtmpl'] = temp_dir+'%(id)s.%(ext)s'
     ydl_opts['format'] = 'bestaudio/best'
     ydl_opts['quiet'] = True
-    ydl = youtube_dl.YoutubeDL(ydl_opts)
     if verbose:
-      logging.info(' Downloading...')
-      # youtube.register_on_progress_callback(util.showProgressBar)
-    # youtube.streams.filter(subtype='mp4', progressive=True).first().download(temp_dir, video_id)
-    # ydl_opts['outtmpl'] = temp_dir+'%(id)s.%(ext)s'
+      ydl_opts['progress_hooks'] = [util.showProgressBar]
+      logging.info(Fore.YELLOW+'↓ '+Style.RESET_ALL+'Downloading...')
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
     video_info = None
     with ydl:
-      video_info = ydl.extract_info(self.video_url, download=False)
       ydl.download([self.video_url])
+      video_info = ydl.extract_info(self.video_url, download=False)
     logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Download Complete')
-    # spinner.succeed('Download Complete')
-    # spinner.stop()
     path = os.path.join(temp_dir, video_id+'.'+video_info['ext'])
     return path
 
@@ -79,6 +73,8 @@ class Song(object):
     if not os.path.exists(artist_dir):
       os.makedirs(artist_dir)
     song_path = os.path.join(artist_dir, self.track+'.mp3')
+    if os.path.exists(song_path):
+      song_path = song_path[:-4]+'('+self.album+').mp3'
     pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
     return song_path
   

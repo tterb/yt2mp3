@@ -14,6 +14,7 @@ from colorama import init, Fore, Style
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from yt2mp3.song import Song
+from pprint import pprint
 
 # Uses the provided data to find a match in iTunes API
 def getSongData(data):
@@ -133,14 +134,14 @@ def getVideoList(url):
   return [i['webpage_url'] for i in results['entries']]
 
 # Displays a download progress bar
-def showProgressBar(stream, _chunk, _file_handle, bytes_remaining):
-  total = stream.filesize
-  current = ((total-bytes_remaining)/total)
-  percent = ('{0:.1f}').format(current*100)
-  progress = int(50*current)
-  status = '█' * progress + '-' * (50 - progress)
-  sys.stdout.write(' ↳ |{bar}| {percent}%\r'.format(bar=status, percent=percent))
+def showProgressBar(status):
+  progress = int(50*(status['downloaded_bytes']/status['total_bytes']))
+  percent = ('{0:.1f}').format(progress*2)
+  bar = '▓'*progress+'-'*(50 - progress)
+  sys.stdout.write(Fore.YELLOW+'↳'+Style.RESET_ALL+' |{bar}| {percent}%\r'.format(bar=bar, percent=percent))
   sys.stdout.flush()
+  if status['status'] == 'finished':
+    logging.info('')
 
 # Removes temporary video and cover-art files 
 def cleanup():
