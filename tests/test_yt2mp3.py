@@ -10,50 +10,56 @@ Brett Stevenson (c) 2018
 
 import os, pytest
 from mutagen.id3 import ID3
-from collections import defaultdict
+from collections import defaultdict, deque
 from yt2mp3 import util, opts
 from yt2mp3.song import Song
 
 @pytest.fixture
 def test_data():
-    return { 'artist_name': 'The Jimi Hendrix Experience',
-             'collection_name': 'Experience Hendrix: The Best of Jimi Hendrix',
+    return { 'artist_name': 'Pink Floyd',
+             'collection_name': 'Wish You Were Here',
              'primary_genre_name': 'Rock',
-             'track_name': 'Bold As Love',
-             'track_number': 12
+             'track_name': 'Have a Cigar',
+             'track_number': 3
             }
 
 @pytest.fixture
 def test_song():
-    data = util.getiTunesData({ 'track_name':'Bold as Love', 'artist_name':'Jimi Hendrix' }).__dict__
+    data = util.getiTunesData({ 'track_name':'Have a Cigar', 'artist_name':'Pink Floyd' }).__dict__
     data['video_url'] = util.getVideoURL(data)
     return Song(data)
-    
+
+def multiple_inputs(inputs):
+    """ provides a function to call for every input requested. """
+    def next_input(_):
+        """ provides the first item in the list. """
+        return inputs.popleft()
+    return next_input
+
 def test_arguments():
-    errors = []
-    args = opts.parseOptions(['-o', '-v', '-a', 'jimi', 'hendrix', '-t', 'bold', 'as', 'love'])
+    args = opts.parseOptions(['-o','-v','-a','pink','floyd','-t','have','a','cigar'])
     assert args.overwrite and args.verbose and not args.quiet
     assert args.resolution == 480
-    assert ' '.join(args.artist) == 'jimi hendrix'
-    assert ' '.join(args.track) == 'bold as love'
+    assert ' '.join(args.artist) == 'pink floyd'
+    assert ' '.join(args.track) == 'have a cigar'
 
 def test_get_song_data(test_data):
-    input = defaultdict(str, {'track_name': 'Bold as Love',
-                              'artist_name': 'Jimi Hendrix'})
+    input = defaultdict(str, {'track_name': 'Have a Cigar',
+                              'artist_name': 'Pink Floyd'})
     data = defaultdict(str, util.getSongData(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
     data.clear()
     input.clear()
-    input['video_url'] = 'https://www.youtube.com/watch?v=gkJhnDkdC-0'
+    input['video_url'] = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
     data = defaultdict(str, util.getSongData(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
 
 def test_itunes_data(test_data):    
     data, results = defaultdict(str), dict()
-    data['track_name'] = 'bold as love'
+    data['track_name'] = 'have a cigar'
     results['track_name'] = util.getSongData(data)
     data.clear()
-    data['artist_name'] = 'jimi hendrix'
+    data['artist_name'] = 'pink floyd'
     results['artist_name'] = util.getSongData(data)
     assert [len(results[key]) > 2 for key in results.keys()]
 
@@ -80,11 +86,28 @@ def test_validate_URL():
             errors.append('URL Validation: '+url)
     assert not errors, 'errors occured:\n{}'.format('\n'.join(errors))
 
-def test_video_data(test_data):
-    url = 'https://www.youtube.com/watch?v=gkJhnDkdC-0'
+def test_video_title_data(test_data):
+    url = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
     title = util.getVideoTitle(url)
     data = util.getVideoData(title).__dict__
     assert [test_data[key] == data[key] for key in test_data.keys()]
+
+def test_video_metadata(test_data):
+    errors = []
+    url = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
+    meta = util.getVideoMetadata(url)
+    assert test_data['track_name'].lower() in meta['song'].lower()
+    assert test_data['artist_name'].lower() in meta['artist'].lower()
+    assert test_data['collection_name'].lower() in meta['album'].lower()
+
+# Test video iTunes lookup failure => should use video data
+def test_video_itunes_failure(monkeypatch):
+    data = defaultdict(str)
+    data['video_url'] = 'https://www.youtube.com/watch?v=GI30qzbj5_s'
+    monkeypatch.setattr('builtins.input', multiple_inputs(deque(['Black Beatles', 'Merkules'])))
+    data = util.getSongData(data)
+    artwork = 'https://img.youtube.com/vi/'+data['video_url'].split('watch?v=')[-1]+'/maxresdefault.jpg'
+    assert data['artwork_url_100'] == artwork
 
 def test_video_download(test_song):
     video_path = test_song.download(False)
