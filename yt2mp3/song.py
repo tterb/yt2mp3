@@ -37,10 +37,6 @@ class Song(object):
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
     self.video_url = data['video_url']
-  
-  def progress_hook(d):
-    if d['status'] == 'finished':
-      logging.info('Done downloading, now converting ...')  
     
   # Downloads the video at the provided url
   def download(self, verbose=False):
@@ -68,7 +64,7 @@ class Song(object):
   def convertToMP3(self, video):
     logging.info(Fore.BLUE+'♬ '+Style.RESET_ALL+'Converting to MP3')
     artist_dir = os.path.expanduser('~/Downloads/Music/')
-    artist_dir = os.path.join(artist_dir, self.artist)
+    artist_dir = os.path.join(artist_dir, self.artist.replace('/',''))
     if not os.path.exists(artist_dir):
       os.makedirs(artist_dir)
     song_path = os.path.join(artist_dir, self.track+'.mp3')
@@ -112,5 +108,5 @@ class Song(object):
   # Checks if a duplicate file exists in the output directory
   def fileExists(self):
     path = os.path.expanduser('~/Downloads/Music/')
-    path = os.path.join(path, self.artist, self.track+'.mp3')
+    path = os.path.join(path, self.artist.replace('/',''), self.track+'.mp3')
     return os.path.exists(path)
