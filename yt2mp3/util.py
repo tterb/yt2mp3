@@ -50,7 +50,10 @@ def getiTunesData(data, exit_fail=True):
     if data['track_name'] and data['artist_name']:
       for song in itunespy.search_track(data['track_name']):
         if data['artist_name'].lower() == song.artist_name.lower():
-          return song
+          if not data['collection_name'] or data['collection_name'] == '':
+            return song
+          elif data['collection_name'].lower() in song.collection_name.lower(): 
+            return song
     elif data['track_name']:
       return itunespy.search_track(data['track_name'])
     elif data['artist_name']:
@@ -61,7 +64,7 @@ def getiTunesData(data, exit_fail=True):
           songs.append(song)
       return songs
     # Attempt to find a close match if no exact matches
-    song = itunespy.search(' '.join([data['track_name'], data['artist_name']]))[0]
+    song = itunespy.search(' '.join([data['track_name'], data['artist_name'], data['collection_name']]))[0]
     if song:
       return song
   except LookupError as err:
@@ -114,6 +117,11 @@ def getVideoURL(data):
     url = 'https://www.youtube.com' + vid['href']
     if validateURL(url):
       return url
+  if data['collection_name'] != '':
+    for url in results:
+      video_data = defaultdict(str, getVideoMetadata(url))
+      if data['collection_name'].lower() in video_data['album'].lower():
+        return url
   return results[0]
 
 def getVideoMetadata(url):

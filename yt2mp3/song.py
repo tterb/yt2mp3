@@ -15,7 +15,7 @@ from colorama import init, Fore, Style
 from PIL import Image
 from yt2mp3 import util
 
-class Song(object):
+class Song():
   """
   A class used to represent a song
   ...
@@ -36,6 +36,7 @@ class Song(object):
     self.disc_count = str(data['disc_count'])
     self.disc_number = str(data['disc_number'])
     self.release_date = data['release_date']
+    self.filename = data['track_name']
     self.video_url = data['video_url']
     
   # Downloads the video at the provided url
@@ -67,9 +68,10 @@ class Song(object):
     artist_dir = os.path.join(artist_dir, self.artist.replace('/',''))
     if not os.path.exists(artist_dir):
       os.makedirs(artist_dir)
-    song_path = os.path.join(artist_dir, self.track+'.mp3')
+    song_path = os.path.join(artist_dir, self.filename+'.mp3')
     if os.path.exists(song_path):
-      song_path = song_path[:-4]+'('+self.album+').mp3'
+      self.filename = self.filename+' ('+self.album+')'
+      song_path = os.path.join(artist_dir, self.filename+'.mp3')
     pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
     return song_path
   
@@ -108,5 +110,9 @@ class Song(object):
   # Checks if a duplicate file exists in the output directory
   def fileExists(self):
     path = os.path.expanduser('~/Downloads/Music/')
-    path = os.path.join(path, self.artist.replace('/',''), self.track+'.mp3')
-    return os.path.exists(path)
+    path = os.path.join(path, self.artist.replace('/',''), self.filename+'.mp3')
+    if os.path.exists(path):
+      tags = EasyID3(path)
+      if len(self.album) == '' or self.album in tags['album'][0]:
+        return True
+    return False
