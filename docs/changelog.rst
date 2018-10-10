@@ -2,6 +2,15 @@
 Changelog  
 ==============
 
+Version 1.2.3 
+----------------
+
+* Improved program CLI
+* Modified program to use `youtube-dl`
+* Added option to specify album name
+
+--------------------------------  
+
 Version 1.2.0 
 ----------------
 

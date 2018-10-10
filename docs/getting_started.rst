@@ -29,6 +29,8 @@ Options
     - Specify the track name query
   * - ``-a, --artist``
     - Specify the artist name query
+  * - ``-c, --collection``
+    - Specify the album name query
   * - ``-u, --url``
     - Specify a Youtube URL or ID 
   * - ``-u, --url``
@@ -47,5 +49,3 @@ Options
     - Show the version number and exit
   * - ``-h, --help``
     - Display information on usage and functionality
-    
-**Note:** Displaying the progress bar currently has a significant impact on download performance, due to `#180 <https://github.com/nficano/pytube/issues/180>`_.  
