@@ -50,6 +50,7 @@ $ yt2mp3 [-options]
 |-------------------|-------------------------------------------------------|
 | `-t, --track`     | Specify the track name query                          |
 | `-a, --artist`    | Specify the artist name query                         |
+| `-c, --collection`| Specify the album name query
 | `-u, --url`       | Specify a Youtube URL or ID                           |
 | `-p, --playlist`  | Specify a Youtube playlist URL or ID                  |
 | `-o, --overwrite` | Overwrite the file if one exists in output directory  |
@@ -63,4 +64,4 @@ $ yt2mp3 [-options]
 Further documentation is available on [Read The Docs](https://yt2mp3.readthedocs.io/en/latest/)
 
 ## Contributing  
-If you'd like to contribute to the project, feel free to submit a pull request and/or suggest a feature enhancement.  
+If you'd like to contribute to the project, feel free to suggest a [feature request](https://github.com/tterb/yt2mp3/issues/new?template=feature_request.md) and/or submit a [pull request](https://github.com/tterb/yt2mp3/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc).  

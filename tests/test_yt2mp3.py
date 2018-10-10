@@ -37,8 +37,8 @@ def multiple_inputs(inputs):
     return next_input
 
 def test_arguments():
-    args = opts.parseOptions(['-o','-v','-a','pink','floyd','-t','have','a','cigar'])
-    assert args.overwrite and args.verbose and not args.quiet
+    args = opts.parseOptions(['-o','-v','-a','pink','floyd','-t','have','a','cigar', '-c'])
+    assert args.collection and args.overwrite and args.verbose and not args.quiet
     assert args.resolution == 480
     assert ' '.join(args.artist) == 'pink floyd'
     assert ' '.join(args.track) == 'have a cigar'
@@ -54,6 +54,16 @@ def test_get_song_data(test_data):
     data = defaultdict(str, util.getSongData(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
 
+def test_get_song_collection_data(test_data):
+    input = defaultdict(str, {'track_name': 'Have a Cigar',
+                              'artist_name': 'Pink Floyd',
+                              'collection_name': 'Wish You Were Here'})
+    data = defaultdict(str, util.getSongData(input))
+    assert [test_data[key] == data[key] for key in test_data.keys()]
+    input['collection_name'] = 'live'
+    assert not util.getiTunesData(input, False)
+    
+    
 def test_itunes_data(test_data):    
     data, results = defaultdict(str), dict()
     data['track_name'] = 'have a cigar'
