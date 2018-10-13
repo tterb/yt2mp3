@@ -13,7 +13,6 @@ from urllib.request import Request, urlopen
 from colorama import init, Fore, Style
 from collections import defaultdict
 from bs4 import BeautifulSoup
-from yt2mp3.song import Song
 
 # Uses the provided data to find a match in iTunes API
 def getSongData(data):

@@ -3,7 +3,7 @@
 ## Version 1.2.3  
 
   * Improved program CLI
-  <!-- * Added command-line download spinner -->
+  * Fixed #22 issue with Python 3.4 compatibility
   * Modified program to use `youtube-dl`
   * Added option to specify album name
 
