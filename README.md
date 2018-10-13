@@ -31,7 +31,7 @@ Once finished, the resulting MP3 file will be saved to your *Downloads* director
 ## Getting Started
 
 ### Prerequisites  
-The program only requires that you have Python 3.5+ and [ffmpeg](https://www.ffmpeg.org/) or [libav](https://www.libav.org/) installed. For more information, check out the [additional setup](https://yt2mp3.readthedocs.io/en/latest/additional_setup.html).
+The program only requires that you have Python 3.4+ and [ffmpeg](https://www.ffmpeg.org/) or [libav](https://www.libav.org/) installed. For more information, check out the [additional setup](https://yt2mp3.readthedocs.io/en/latest/additional_setup.html).
 
 ### Install  
 You can install the program with the following command:  
