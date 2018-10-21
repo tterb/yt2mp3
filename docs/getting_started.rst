@@ -1,6 +1,11 @@
+
 ================
 Getting Started
 ================
+
+.. image:: images/terminal.svg
+   :width: 600
+   :alt: Terminal
 
 Prerequisites  
 --------------
@@ -16,7 +21,7 @@ Once installed, the program can be executed via the command-line as follows:
   
   $ yt2mp3 [-options]
 
-When finished, you can find the resulting MP3 file in your *Downloads* directory, with the following file-structure ``Music/{artist}/{track}.mp3``.
+When the program is finished, you can find the resulting MP3 file in your *Downloads* directory, with the following file-structure ``Music/{artist}/{track}.mp3``.
 
 Options
 ^^^^^^^^
@@ -49,3 +54,5 @@ Options
     - Show the version number and exit
   * - ``-h, --help``
     - Display information on usage and functionality
+
+|

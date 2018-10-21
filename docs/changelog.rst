@@ -6,7 +6,7 @@ Version 1.2.3
 ----------------
 
 * Improved program CLI
-* Fixed `#22 <https://github.com/tterb/yt2mp3/issues/22>`_ issue with Python 3.4 compatibility
+* Fixed `#22 <https://github.com/tterb/yt2mp3/issues/22>`_ Python 3.4 compatibility
 * Modified program to use `youtube-dl`
 * Added option to specify album name
 
@@ -65,4 +65,5 @@ Version 1.0.0
 
 * All features added
 * All bugs created
- 
+
+|

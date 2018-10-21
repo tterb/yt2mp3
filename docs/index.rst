@@ -3,9 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-========
-yt2mp3
-========  
+.. image:: images/yt2mp3.svg
+   :width: 270
+   :alt: YT2MP3
+
+|  
 
 .. image:: https://img.shields.io/pypi/v/yt2mp3.svg
   :target: https://pypi.python.org/pypi/yt2mp3/
@@ -27,6 +29,8 @@ yt2mp3
   :target: https://yt2mp3.readthedocs.io/en/latest/license.html
   :alt: License
 
+|
+
 A program that simplifies the process of searching, downloading and converting Youtube videos to MP3 files from the command-line.  
 
 -------------------
@@ -34,10 +38,19 @@ A program that simplifies the process of searching, downloading and converting Y
 Overview
 ^^^^^^^^^^
 
-All you need is the video URL or the name of the artist/track you're looking for, the program will then attempt to retrieve data for a song by matching the provided input by querying the iTunes API and find a corresponding YouTube video, if one isn't provided. The video will then be downloaded, converted, and the gathered data will be used to populate the metadata of the MP3.   
+All you need is the video URL or the name of the artist/track you're looking for. The program will attempt to retrieve data for a song matching the provided input by querying the iTunes API and use the data to find a corresponding YouTube video, if a URL is not provided. The video will then be downloaded, converted, and the gathered data will be used to populate the metadata of the MP3.
 
-**Note:** If a URL is provided and no match is found for the song data, the program will prompt the user for the title/artist and the YouTube thumbnail will be used as the album artwork.  
+.. note:: 
+  If a URL is provided and no match is found for the song data, the program will prompt the user for the title/artist and the YouTube thumbnail will be used as the album artwork.  
 
+-------------------
+
+Contributing  
+^^^^^^^^^^^^^
+
+If you'd like to contribute to the project, feel free to suggest a `feature request <https://github.com/tterb/yt2mp3/issues/new?template=feature_request.md>`_ and/or submit a `pull request <https://github.com/tterb/yt2mp3/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc>`_.  
+
+-------------------
 
 Contents
 ^^^^^^^^^^
@@ -50,6 +63,7 @@ Contents
   additional_setup
   changelog
   contributing
+  code_of_conduct
   license
 
 

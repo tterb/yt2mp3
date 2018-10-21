@@ -6,9 +6,8 @@ The project utilizes the `pydub <https://github.com/jiaaro/pydub>`_ package for 
 You can use `ffmpeg <http://ffmpeg.org/>`_ or `libav <https://www.libav.org/>`_.
 
 
-Mac (using `homebrew <http://brew.sh/>`_):
+Mac (using `homebrew <http://brew.sh/>`_)
 -------------------------------------------
-
 
 .. code:: bash
 
@@ -21,7 +20,7 @@ Mac (using `homebrew <http://brew.sh/>`_):
   brew install libav --with-libvorbis --with-sdl --with-theora
 
 
-Linux (using `aptitude <https://wiki.debian.org/Aptitude>`_):
+Linux (using `aptitude <https://wiki.debian.org/Aptitude>`_)
 --------------------------------------------------------------
 
 .. code:: bash
@@ -35,8 +34,10 @@ Linux (using `aptitude <https://wiki.debian.org/Aptitude>`_):
   apt-get install ffmpeg libavcodec-extra-53
 
 
-Windows:
+Windows
 ---------
 
   * Download and extract **libav** from Windows binaries `provided here <http://builds.libav.org/windows/>`_.
   * Add the **libav** `/bin` folder to your PATH
+
+|

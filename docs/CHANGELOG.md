@@ -3,7 +3,7 @@
 ## Version 1.2.3  
 
   * Improved program CLI
-  * Fixed #22 issue with Python 3.4 compatibility
+  * Fixed [#22](https://github.com/tterb/yt2mp3/issues/22) Python 3.4 compatibility
   * Modified program to use `youtube-dl`
   * Added option to specify album name
 
@@ -12,7 +12,7 @@
 ## Version 1.2.0  
 
   * Improved program file-structure
-  * Added custom cover-art resolution option #16 
+  * Added custom cover-art resolution option [#16](https://github.com/tterb/yt2mp3/issues/16) 
   * Added validation check for YouTube URLs 
   * Improved command-line option parsing  
   * Improved program test coverage and logging

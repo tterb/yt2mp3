@@ -27,3 +27,4 @@ If you'd like to contribute to the project, you can download and install the pro
   # Install program dependencies
   $ pip install -r requirements.txt
   
+|
