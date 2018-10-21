@@ -1,21 +1,34 @@
 language: python
 python:
-    - "3.4"
-    - "3.5"
-    - "3.6"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+matrix:
+  include:
+    - python: 3.7
+      dist: xenial
+      sudo: true
 os:
-    - linux
+  - linux
+  - osx
+# Due to insufficient Python support https://github.com/travis-ci/travis-ci/issues/9929
+matrix:
+  allow_failures:
+    - os: osx
+
 sudo: required
 cache: pip
 before_install:
-    - pip install pytest pytest-cov codecov
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:mc3man/trusty-media; fi
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; fi
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y ffmpeg; fi
+  - pip install pytest pytest-cov codecov
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo add-apt-repository -y ppa:mc3man/trusty-media; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get update; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y ffmpeg; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ffmpeg --with-libvorbis --with-sdl2 --with-theora; fi
 install:
-    - pip install -r requirements.txt
-    - pip install -e .
+  - pip install -r requirements.txt
+  - pip install -e .
 script:
-    - python3 setup.py test
+  - python3 setup.py test
 after_success:
-    - codecov
+  - codecov
