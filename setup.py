@@ -19,18 +19,17 @@ setuptools.setup(
   setup_requires=['pytest-runner'],
   tests_require=['pytest'],
   install_requires=[
-    'pydub==0.21.0',
-    'mutagen==1.40.0',
+    'beautifulsoup4==4.6.3'
+    'colorama==0.3.9',
     'curses_menu==0.5.0',
-    'requests==2.18.4',
+    'itunespy==1.5.5',
+    'lxml==4.2.3',
+    'mutagen==1.40.0',
+    'Pillow==5.3.0',
+    'pydub==0.21.0',
+    'requests==2.20.0',
     'setuptools==39.2.0',
     'youtube_dl==2018.9.10',
-    'itunespy==1.5.5',
-    'colorama==0.3.9',
-    'halo==0.0.17',
-    'Pillow==5.3.0',
-    'lxml==4.2.3',
-    'beautifulsoup4==4.6.3'
   ],
   classifiers = [
     'Development Status :: 4 - Beta',
