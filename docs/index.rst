@@ -4,10 +4,10 @@
    contain the root `toctree` directive.
 
 .. image:: images/yt2mp3.svg
-   :width: 270
+   :width: 280
    :alt: YT2MP3
 
-|  
+|
 
 .. image:: https://img.shields.io/pypi/v/yt2mp3.svg
   :target: https://pypi.python.org/pypi/yt2mp3/
