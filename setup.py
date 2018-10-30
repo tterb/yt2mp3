@@ -19,7 +19,7 @@ setuptools.setup(
   setup_requires=['pytest-runner'],
   tests_require=['pytest'],
   install_requires=[
-    'beautifulsoup4==4.6.3'
+    'beautifulsoup4==4.6.3',
     'colorama==0.3.9',
     'curses_menu==0.5.0',
     'itunespy==1.5.5',
