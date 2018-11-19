@@ -26,7 +26,7 @@ setuptools.setup(
     'lxml==4.2.3',
     'mutagen==1.41.1',
     'Pillow==5.3.0',
-    'pydub==0.21.0',
+    'pydub==0.23.0',
     'requests==2.20.1',
     'setuptools==40.6.2',
     'youtube_dl==2018.11.7',
