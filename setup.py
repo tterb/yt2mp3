@@ -23,7 +23,7 @@ setuptools.setup(
     'colorama==0.4.1',
     'curses_menu==0.5.0',
     'itunespy==1.5.5',
-    'lxml==4.2.3',
+    'lxml==4.2.5',
     'mutagen==1.41.1',
     'Pillow==5.3.0',
     'pydub==0.21.0',
