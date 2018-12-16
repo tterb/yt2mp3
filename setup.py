@@ -28,7 +28,7 @@ setuptools.setup(
     'Pillow==5.3.0',
     'pydub==0.23.0',
     'requests==2.20.1',
-    'setuptools==40.6.2',
+    'setuptools==40.6.3',
     'youtube_dl==2018.12.9',
   ],
   classifiers = [
