@@ -27,7 +27,7 @@ setuptools.setup(
     'mutagen==1.41.1',
     'Pillow==5.3.0',
     'pydub==0.23.0',
-    'requests==2.20.1',
+    'requests==2.21.0',
     'setuptools==40.6.3',
     'youtube_dl==2018.12.9',
   ],
