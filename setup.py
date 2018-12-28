@@ -24,7 +24,7 @@ setuptools.setup(
     'curses_menu==0.5.0',
     'itunespy==1.5.5',
     'lxml==4.2.5',
-    'mutagen==1.41.1',
+    'mutagen==1.42.0',
     'Pillow==5.3.0',
     'pydub==0.23.0',
     'requests==2.20.1',
