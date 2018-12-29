@@ -17,8 +17,7 @@ from yt2mp3.song import Song
 def main(args):
   # Initialize colorama for Windows
   init()
-  # Get command-line options
-  args = opts.parseOptions(args)
+  args = opts.parse_options(args)
   # Set logging level
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
   queue = list()
@@ -66,6 +65,7 @@ def main(args):
   # Catch program exit and `ctrl+c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
     util.cleanup()
+    logging.info('\n'+Fore.RED+'✘ '+Style.RESET_ALL+'Cancelled')
     sys.exit()
   util.cleanup()
   logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Done')

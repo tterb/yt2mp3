@@ -10,9 +10,9 @@ Brett Stevenson (c) 2018
 
 import argparse
 
-def parseOptions(args):
+def parse_options(args):
   parser = argparse.ArgumentParser(prog='yt2mp3', usage='%(prog)s [options]', add_help=True)
-  parser.add_argument('--version', action='version', version='v1.2.3', help='show the program version number and exit')
+  parser.add_argument('--version', action='version', version='v1.2.4', help='show the program version number and exit')
   parser.add_argument('-t', '--track', nargs='+', help='specify the track name query', default='')
   parser.add_argument('-a', '--artist', nargs='+', help='specify the artist name query', default='')
   parser.add_argument('-c', '--collection', action='store_true', help='specify the album name query')
