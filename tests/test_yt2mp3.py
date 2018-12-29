@@ -26,7 +26,7 @@ def test_data():
 @pytest.fixture
 def test_song():
     data = util.get_itunes_data({ 'track_name':'Have a Cigar', 
-    'artist_name':'Pink Floyd' }).__dict__
+    'artist_name':'Pink Floyd', 'track_time':308000}).__dict__
     data['video_url'] = util.get_video_url(data)
     return Song(data)
 

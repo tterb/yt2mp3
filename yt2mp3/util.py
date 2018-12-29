@@ -14,11 +14,12 @@ from collections import defaultdict
 from bs4 import BeautifulSoup
 from colorama import Fore, Style
 
-def get_song_data(data):
+def get_song_data(data, collection=False):
   """
   Employs a variety of methods for retrieving song data for the provided input
   Args:
     data: A dict of values provided by the user
+    collection: A boolean representing whether an album has been specified
   Returns:
     A dict of the retrieved song data
   """
@@ -37,7 +38,7 @@ def get_song_data(data):
     result = get_itunes_data(data)
     if result:
       data = defaultdict(str, result.__dict__)
-      data['video_url'] = get_video_url(data)
+      data['video_url'] = get_video_url(data, collection)
   else:
     songs = get_itunes_data(data)
     if data['track_name']:
@@ -46,7 +47,7 @@ def get_song_data(data):
       options = [s.track_name for s in songs]
     result = songs[show_menu(options)]
     data = defaultdict(str, result.__dict__)
-    data['video_url'] = get_video_url(data)
+    data['video_url'] = get_video_url(data, collection)
   return data
 
 def get_itunes_data(data, exit_fail=True):
@@ -106,6 +107,42 @@ def get_video_data(title):
     return itunespy.search(keywords)[0]
   except LookupError:
     pass
+  
+def get_video_url(data, collection=False):
+  """
+  Scrapes YouTube for a video matching the user input and iTunes track data
+  Args:
+    data: A dict of values provided by the user
+    collection: A boolean representing whether an album has been specified
+  Returns:
+    The URL of a YouTube video matching the provided values
+  """
+  query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
+  url = 'https://www.youtube.com/results?search_query='+query
+  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urlopen(req, context=ssl.create_default_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  results = list()
+  for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
+    url = 'https://www.youtube.com' + vid['href']
+    if validate_url(url):
+      # Check that video time is similar to the track time
+      if 'track_time' in data.keys():
+        target = data['track_time']//1000
+        vid_time = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['duration']
+        if abs(target-vid_time) < 20:
+          if collection:
+            video_data = defaultdict(str, get_video_metadata(url))
+            if data['collection_name'].lower() in video_data['album'].lower():
+              return url
+          else:
+            return url
+      # Check video metadata if album has been specified by user
+      elif collection:
+        video_data = defaultdict(str, get_video_metadata(url))
+        if data['collection_name'].lower() in video_data['album'].lower():
+          return url
+      return url
 
 def validate_url(url, playlist=False):
   """
@@ -121,6 +158,7 @@ def validate_url(url, playlist=False):
     pattern = r'^(https?\:\/\/)?(www\.)?youtube\.com\/((playlist\?list=.*)|(watch\?list=.*&v=.*)|(watch\?v=[a-zA-Z0-9_\-]{11}&list=.*))$'
   return bool(re.match(pattern, str(url)))
 
+
 def get_video_title(url):
   """
   Retrieves the title of the provided YouTube video
@@ -131,44 +169,6 @@ def get_video_title(url):
   """
   return youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['title']
 
-def show_menu(options):
-  """
-  Displays an interactive menu of matching song entries
-  Args:
-    options: A list of potential matches from the iTunes API
-  Returns:
-    The index of the menu entry selected by the user
-  """
-  menu = cursesmenu.SelectionMenu(options, title='Select an song')
-  selection = menu.get_selection(options)
-  if selection >= len(options):
-    sys.exit()
-  return selection
-
-def get_video_url(data):
-  """
-  Scrapes YouTube for a video matching the user input
-  Args:
-    data: A dict of values provided by the user
-  Returns:
-    The URL of a YouTube video matching the provided values
-  """
-  query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
-  url = 'https://www.youtube.com/results?search_query=' + query
-  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  response = urlopen(req, context=ssl.create_default_context())
-  soup = BeautifulSoup(response.read(), 'lxml')
-  results = []
-  for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
-    url = 'https://www.youtube.com' + vid['href']
-    if validate_url(url):
-      return url
-  if data['collection_name']:
-    for url in results:
-      video_data = defaultdict(str, get_video_metadata(url))
-      if data['collection_name'].lower() in video_data['album'].lower():
-        return url
-  return results[0]
 
 def get_video_metadata(url):
   """
@@ -187,6 +187,7 @@ def get_video_metadata(url):
     key = next(item.find('h4').stripped_strings).lower()
     video_data[key] = next(item.find('li').stripped_strings).lower()
   return video_data
+  
 
 def get_video_list(url):
   """
@@ -198,6 +199,20 @@ def get_video_list(url):
   """
   results = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)
   return [i['webpage_url'] for i in results['entries']]
+
+def show_menu(options):
+  """
+  Displays an interactive menu of matching song entries
+  Args:
+    options: A list of potential matches from the iTunes API
+  Returns:
+    The index of the menu entry selected by the user
+  """
+  menu = cursesmenu.SelectionMenu(options, title='Select an song')
+  selection = menu.get_selection(options)
+  if selection >= len(options):
+    sys.exit()
+  return selection
 
 def show_progressbar(status):
   """
@@ -212,6 +227,7 @@ def show_progressbar(status):
   sys.stdout.flush()
   if status['status'] == 'finished':
     logging.info('')
+
 
 def cleanup():
   """
