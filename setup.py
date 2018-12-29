@@ -29,7 +29,7 @@ setuptools.setup(
     'pydub==0.23.0',
     'requests==2.21.0',
     'setuptools==40.6.3',
-    'youtube_dl==2018.12.9',
+    'youtube_dl==2018.12.17',
   ],
   classifiers = [
     'Development Status :: 4 - Beta',
