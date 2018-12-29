@@ -3,12 +3,12 @@
 <p align="right">
   <!-- CI Status -->
   <a href="https://travis-ci.org/tterb/yt2mp3"><img src="https://travis-ci.org/tterb/yt2mp3.svg?branch=master" alt="Build Status"/></a>
-  <!--Project version-->
-  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://badge.fury.io/py/yt2mp3.svg" alt="PyPi Version"/></a>
   <!-- CodeCov -->
   <a href="https://codecov.io/gh/tterb/yt2mp3"><img src="https://codecov.io/gh/tterb/yt2mp3/branch/master/graph/badge.svg"/></a>
   <!-- Docs Status -->
   <a href='https://yt2mp3.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yt2mp3/badge/?version=latest' alt='Documentation Status'/></a>
+  <!--Project version-->
+  <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://badge.fury.io/py/yt2mp3.svg" alt="PyPi Version"/></a>
   <!-- Python version -->
   <a href="https://pypi.python.org/pypi/yt2mp3/"><img src="https://img.shields.io/pypi/pyversions/yt2mp3.svg" alt="PyPI Python Versions"/></a>
   <!--License-->
@@ -18,7 +18,7 @@
 <br>
 
 <p align="center">
-  <img src="https://cdn.rawgit.com/tterb/yt2mp3/d96b8c70/docs/images/terminal.svg" width="750"/>
+  <img src="https://cdn.rawgit.com/tterb/yt2mp3/d96b8c70/docs/images/terminal.svg" width="700"/>
 </p>
 
 ## Description  
