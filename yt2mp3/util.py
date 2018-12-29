@@ -1,57 +1,73 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and 
-converting Youtube videos to MP3 files with embedded metadata via the 
+A program that simplifies the process of searching, downloading and
+converting Youtube videos to MP3 files with embedded metadata via the
 iTunes API.
 yt2mp3/util.py
 Brett Stevenson (c) 2018
 """
 
-import sys, os, re, youtube_dl, pydub, itunespy, urllib, requests, io, ssl, glob, shutil, cursesmenu, logging, string
+import sys, os, re, youtube_dl, itunespy, urllib, ssl, shutil, cursesmenu, logging, string
 from urllib.request import Request, urlopen
-from colorama import init, Fore, Style
 from collections import defaultdict
 from bs4 import BeautifulSoup
+from colorama import Fore, Style
 
-# Uses the provided data to find a match in iTunes API
-def getSongData(data):
+def get_song_data(data, collection=False):
+  """
+  Employs a variety of methods for retrieving song data for the provided input
+  Args:
+    data: A dict of values provided by the user
+    collection: A boolean representing whether an album has been specified
+  Returns:
+    A dict of the retrieved song data
+  """
   if data['video_url']:
     url = data['video_url']
-    result = getVideoData(getVideoTitle(url))
+    result = get_video_data(get_video_title(url))
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
       data['artwork_url_100'] = 'https://img.youtube.com/vi/'+url.split('watch?v=')[-1]+'/maxresdefault.jpg'
-      result = getiTunesData(data, False)
-    if result: 
+      result = get_itunes_data(data, False)
+    if result:
       data = defaultdict(str, result.__dict__)
       data['video_url'] = url
   elif data['artist_name'] and data['track_name']:
-    result = getiTunesData(data)
+    result = get_itunes_data(data)
     if result:
       data = defaultdict(str, result.__dict__)
-      data['video_url'] = getVideoURL(data)
+      data['video_url'] = get_video_url(data, collection)
   else:
-    songs = getiTunesData(data)
+    songs = get_itunes_data(data)
     if data['track_name']:
       options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
     elif data['artist_name']:
       options = [s.track_name for s in songs]
-    result = songs[showMenu(options)]
-    data = defaultdict(str, result.__dict__);
-    data['video_url'] = getVideoURL(data)
+    result = songs[show_menu(options)]
+    data = defaultdict(str, result.__dict__)
+    data['video_url'] = get_video_url(data, collection)
   return data
 
-# Attempt to retrieve song data from iTunes API
-def getiTunesData(data, exit_fail=True):
+def get_itunes_data(data, exit_fail=True):
+  """
+  Attempts to retrieve song data from the iTunes API
+  Args:
+    data: A dict of values provided by the user
+    exit_fail: A bool specifying if the program should exit if no match
+  Returns:
+    A dict of song data retrieved from the iTunes API, if a match is found
+  Raises:
+    LookupError: If a match isn't found using the iTunes API
+  """
   try:
     if data['track_name'] and data['artist_name']:
       for song in itunespy.search_track(data['track_name']):
         if data['artist_name'].lower() == song.artist_name.lower():
           if 'collection_name' not in data.keys():
             return song
-          elif data['collection_name'].lower() in song.collection_name.lower(): 
+          elif data['collection_name'].lower() in song.collection_name.lower():
             return song
     elif data['track_name']:
       return itunespy.search_track(data['track_name'])
@@ -71,8 +87,16 @@ def getiTunesData(data, exit_fail=True):
       logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+' %s', err)
       sys.exit()
 
-# Attempt to retrieve song data from the video title
-def getVideoData(title):
+def get_video_data(title):
+  """
+  Attempts to retrieve song data from the video title
+  Args:
+    title: A string containing the title of the YouTube video
+  Returns:
+    A dict of song data if a match is found using the iTunes APi
+  Raises:
+    LookupError: If a match isn't found using the iTunes API
+  """
   # Remove parenthesis, punctuation and nondescript words
   pattern = r'\([^)]*\)|\[[^]]*\]|ft(\.)?|feat(\.)?|\blyrics?\b|official|video|audio|h(d|q)'
   keywords = re.sub(pattern, '', str(title), flags=re.I)
@@ -83,64 +107,119 @@ def getVideoData(title):
     return itunespy.search(keywords)[0]
   except LookupError:
     pass
+  
+def get_video_url(data, collection=False):
+  """
+  Scrapes YouTube for a video matching the user input and iTunes track data
+  Args:
+    data: A dict of values provided by the user
+    collection: A boolean representing whether an album has been specified
+  Returns:
+    The URL of a YouTube video matching the provided values
+  """
+  query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
+  url = 'https://www.youtube.com/results?search_query='+query
+  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urlopen(req, context=ssl.create_default_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  results = list()
+  for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
+    url = 'https://www.youtube.com' + vid['href']
+    if validate_url(url):
+      # Check that video time is similar to the track time
+      if 'track_time' in data.keys():
+        target = data['track_time']//1000
+        vid_time = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['duration']
+        if abs(target-vid_time) < 20:
+          if collection:
+            video_data = defaultdict(str, get_video_metadata(url))
+            if data['collection_name'].lower() in video_data['album'].lower():
+              return url
+          else:
+            return url
+      # Check video metadata if album has been specified by user
+      elif collection:
+        video_data = defaultdict(str, get_video_metadata(url))
+        if data['collection_name'].lower() in video_data['album'].lower():
+          return url
+      return url
 
-# Ensures the validity of provided YouTube URLs
-# TODO issues with some URL formats
-def validateURL(url, playlist=False):
+def validate_url(url, playlist=False):
+  """
+  Confirms the validity of the provided YouTube video/playlist URL
+  Args:
+    url: A YouTube video/playlist URL
+    playlist: A boolean flag to determine playlist URL
+  Returns:
+    A bool indicating the validity of the provided URL
+  """
   pattern = r'^(https?\:\/\/)?(www\.)?(youtube\.com\/watch\?v=([a-zA-Z0-9_\-]{11})|youtu\.?be\/([a-zA-Z0-9_\-]{11}))$'
   if playlist:
     pattern = r'^(https?\:\/\/)?(www\.)?youtube\.com\/((playlist\?list=.*)|(watch\?list=.*&v=.*)|(watch\?v=[a-zA-Z0-9_\-]{11}&list=.*))$'
   return bool(re.match(pattern, str(url)))
 
-# Get YouTube video title
-def getVideoTitle(url):
+
+def get_video_title(url):
+  """
+  Retrieves the title of the provided YouTube video
+  Args:
+    url: A YouTube video URL
+  Returns:
+    A string containing the title of the provided YouTube video
+  """
   return youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['title']
+
+
+def get_video_metadata(url):
+  """
+  Attempts to retrieve relavent data from the YouTube video metadata
+  Args:
+    url: A YouTube video URL
+  Returns:
+    A dict of the retrieved song data
+  """
+  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urlopen(req, context=ssl.create_default_context())
+  soup = BeautifulSoup(response.read(), 'lxml')
+  video_data = {}
+  section = soup.find('ul', attrs={'class': 'watch-extras-section'})
+  for item in section.find_all('li', recursive=False):
+    key = next(item.find('h4').stripped_strings).lower()
+    video_data[key] = next(item.find('li').stripped_strings).lower()
+  return video_data
   
-# Displays an interactive menu of songs
-def showMenu(options):
+
+def get_video_list(url):
+  """
+  Retrieves a list of video URL's from the playlist URL
+  Args:
+    url: A YouTube playlist URL
+  Returns:
+    A list of individual URL's for each video in the playlist
+  """
+  results = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)
+  return [i['webpage_url'] for i in results['entries']]
+
+def show_menu(options):
+  """
+  Displays an interactive menu of matching song entries
+  Args:
+    options: A list of potential matches from the iTunes API
+  Returns:
+    The index of the menu entry selected by the user
+  """
   menu = cursesmenu.SelectionMenu(options, title='Select an song')
   selection = menu.get_selection(options)
   if selection >= len(options):
     sys.exit()
   return selection
 
-# Scrapes YouTube for a video containing the track and artist
-def getVideoURL(data):
-  query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
-  url = 'https://www.youtube.com/results?search_query=' + query
-  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  response = urlopen(req, context=ssl._create_unverified_context())
-  soup = BeautifulSoup(response.read(), 'lxml')
-  results = []
-  for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
-    url = 'https://www.youtube.com' + vid['href']
-    if validateURL(url):
-      return url
-  if data['collection_name']:
-    for url in results:
-      video_data = defaultdict(str, getVideoMetadata(url))
-      if data['collection_name'].lower() in video_data['album'].lower():
-        return url
-  return results[0]
-
-def getVideoMetadata(url):
-  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  response = urlopen(req, context=ssl._create_unverified_context())
-  soup = BeautifulSoup(response.read(), 'lxml')
-  video_data = {}
-  section = soup.find('ul', attrs={'class': 'watch-extras-section'})
-  for li in section.find_all('li', recursive=False):
-      key = next(li.find('h4').stripped_strings).lower()
-      video_data[key] = next(li.find('li').stripped_strings).lower()
-  return video_data
-
-# Returns a list of video URLs in playlist
-def getVideoList(url):
-  results = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)
-  return [i['webpage_url'] for i in results['entries']]
-
-# Displays a download progress bar
-def showProgressBar(status):
+def show_progressbar(status):
+  """
+  Prints a progress-bar for the download status
+  Args:
+    status: A dict indicating the status of the active download
+  """
   progress = int(50*(status['downloaded_bytes']/status['total_bytes']))
   percent = ('{0:.1f}').format(progress*2)
   bar = '▓'*progress+'-'*(50 - progress)
@@ -149,8 +228,11 @@ def showProgressBar(status):
   if status['status'] == 'finished':
     logging.info('')
 
-# Removes temporary video and cover-art files 
+
 def cleanup():
+  """
+  Cleans up temporary directories/files used by the program
+  """
   directory = os.path.expanduser('~/Downloads/Music/')
   video_dir = os.path.join(directory, 'temp/')
   cover_dir = os.path.join(directory, 'CoverArt/')
