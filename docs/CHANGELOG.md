@@ -1,5 +1,14 @@
 # Changelog  
 
+## Version 1.2.4  
+
+  * Improved optimal video retrieval by utilizing video and track lengths  
+  * Normalized function and variable naming-conventions  
+  * Added missing function docstrings  
+  * Updated project dependencies  
+
+--------------------------------  
+
 ## Version 1.2.3  
 
   * Improved package CLI  
