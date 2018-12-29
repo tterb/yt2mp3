@@ -14,7 +14,7 @@ from collections import defaultdict
 from bs4 import BeautifulSoup
 from colorama import Fore, Style
 
-def get_song_data(data, collection):
+def get_song_data(data, collection=False):
   """
   Employs a variety of methods for retrieving song data for the provided input
   Args:
@@ -108,7 +108,7 @@ def get_video_data(title):
   except LookupError:
     pass
   
-def get_video_url(data, collection):
+def get_video_url(data, collection=False):
   """
   Scrapes YouTube for a video matching the user input and iTunes track data
   Args:
@@ -127,22 +127,22 @@ def get_video_url(data, collection):
     url = 'https://www.youtube.com' + vid['href']
     if validate_url(url):
       # Check that video time is similar to the track time
-      if data['track_time']:
+      if 'track_time' in data.keys():
         target = data['track_time']//1000
         vid_time = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['duration']
-        # print(f'{vid_time} - {target} = {abs(vid_time-target)}')
         if abs(target-vid_time) < 20:
           if collection:
-            results.append(url)
+            video_data = defaultdict(str, get_video_metadata(url))
+            if data['collection_name'].lower() in video_data['album'].lower():
+              return url
           else:
             return url
-  # Check video metadata if album has been specified by user
-  if collection:
-    for url in results:
-      video_data = defaultdict(str, get_video_metadata(url))
-      if data['collection_name'].lower() in video_data['album'].lower():
-        return url
-  return results[0]
+      # Check video metadata if album has been specified by user
+      elif collection:
+        video_data = defaultdict(str, get_video_metadata(url))
+        if data['collection_name'].lower() in video_data['album'].lower():
+          return url
+      return url
 
 def validate_url(url, playlist=False):
   """
