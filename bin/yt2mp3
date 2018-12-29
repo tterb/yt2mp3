@@ -17,7 +17,6 @@ from yt2mp3.song import Song
 def main(args):
   # Initialize colorama for Windows
   init()
-  # Get command-line options
   args = opts.parse_options(args)
   # Set logging level
   logging.basicConfig(level=logging.WARNING if args.quiet else logging.INFO, format='%(message)s')
@@ -54,7 +53,7 @@ def main(args):
         title = util.get_video_title(url)
         logging.info('%s of %s: %s', (i+1), len(queue), title)
         data['video_url'] = url
-      song = Song(util.get_song_data(data))
+      song = Song(util.get_song_data(data, args.collection))
       if not args.overwrite and song.file_exists():
         logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'This song already exists in the output directory')
         if args.playlist:
