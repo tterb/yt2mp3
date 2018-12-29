@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 yt2mp3
-A program that simplifies the process of searching, downloading and 
-converting Youtube videos to MP3 files with embedded metadata via the 
+A program that simplifies the process of searching, downloading and
+converting Youtube videos to MP3 files with embedded metadata via the
 iTunes API.
 yt2mp3/opts.py
 Brett Stevenson (c) 2018
@@ -10,7 +10,14 @@ Brett Stevenson (c) 2018
 
 import argparse
 
-def parseOptions(args):
+def parse_options(args):
+  """
+  Parses command-line options and default states
+  Args:
+    args: A list of provided command-line options
+  Returns:
+    A parser object for handling command-line options
+  """
   parser = argparse.ArgumentParser(prog='yt2mp3', usage='%(prog)s [options]', add_help=True)
   parser.add_argument('--version', action='version', version='v1.2.3', help='show the program version number and exit')
   parser.add_argument('-t', '--track', nargs='+', help='specify the track name query', default='')
