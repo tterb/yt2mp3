@@ -7,4 +7,4 @@ mutagen==1.42.0
 Pillow==5.4.0
 pydub==0.23.0
 requests==2.21.0
-youtube_dl==2019.1.2
+youtube_dl==2019.1.10
