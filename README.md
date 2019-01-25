@@ -1,4 +1,6 @@
 # YouTube to MP3
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftterb%2Fyt2mp3.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftterb%2Fyt2mp3?ref=badge_shield)
+
 
 <p align="right">
   <!-- CI Status -->
@@ -20,6 +22,9 @@
 <p align="center">
   <img src="https://cdn.rawgit.com/tterb/yt2mp3/d96b8c70/docs/images/terminal.svg" width="700"/>
 </p>
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ftterb%2Fyt2mp3.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ftterb%2Fyt2mp3?ref=badge_large)
 
 ## Description  
 This program simplifies the process of searching, downloading and converting Youtube videos to MP3 files from the command-line. All you need is the video URL or the name of the artist/track you're looking for.  
@@ -64,4 +69,4 @@ $ yt2mp3 [-options]
 Further documentation is available on [Read The Docs](https://yt2mp3.readthedocs.io/en/latest/)
 
 ## Contributing  
-If you'd like to contribute to the project, feel free to suggest a [feature request](https://github.com/tterb/yt2mp3/issues/new?template=feature_request.md) and/or submit a [pull request](https://github.com/tterb/yt2mp3/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc).  
+If you'd like to contribute to the project, feel free to suggest a [feature request](https://github.com/tterb/yt2mp3/issues/new?template=feature_request.md) and/or submit a [pull request](https://github.com/tterb/yt2mp3/pulls?q=is%3Apr+is%3Aopen+sort%3Aupdated-desc).
