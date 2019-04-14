@@ -23,7 +23,7 @@ def get_song_data(data, collection=False):
   Returns:
     A dict of the retrieved song data
   """
-  if data['video_url']:
+  if 'video_url' in data.keys():
     url = data['video_url']
     result = get_video_data(get_video_title(url))
     if not result:
@@ -39,15 +39,6 @@ def get_song_data(data, collection=False):
     if result:
       data = defaultdict(str, result.__dict__)
       data['video_url'] = get_video_url(data, collection)
-  else:
-    songs = get_itunes_data(data)
-    if data['track_name']:
-      options = ['%-30.25s %10.25s' % (s.track_name, s.artist_name) for s in songs]
-    elif data['artist_name']:
-      options = [s.track_name for s in songs]
-    result = songs[show_menu(options)]
-    data = defaultdict(str, result.__dict__)
-    data['video_url'] = get_video_url(data, collection)
   return data
 
 def get_itunes_data(data, exit_fail=True):
@@ -200,19 +191,71 @@ def get_video_list(url):
   results = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)
   return [i['webpage_url'] for i in results['entries']]
 
-def show_menu(options):
+def get_artist_options(track):
   """
-  Displays an interactive menu of matching song entries
+  Retrieves artists with songs that match the specified track name from the iTunes API
   Args:
-    options: A list of potential matches from the iTunes API
+    track: A user-input string containing a track name
   Returns:
-    The index of the menu entry selected by the user
+     A dict of the artist options to provide the user 
   """
-  menu = cursesmenu.SelectionMenu(options, title='Select an song')
-  selection = menu.get_selection(options)
-  if selection >= len(options):
-    sys.exit()
-  return selection
+  try:
+      artist_opts = dict()
+      for song in itunespy.search_track(track):
+        if song.artist_name not in artist_opts:
+          artist_opts[song.artist_name] = song
+        if len(artist_opts) >= 5:
+          return artist_opts
+      # if artist_opts:
+      return artist_opts
+      # else:
+      #   return None
+  except LookupError as err:
+    if exit_fail:
+      logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+' %s', err)
+      sys.exit()
+
+def get_track_options(artist):
+  """
+  Retrieves tracks from the specified artist from the iTunes API
+  Args:
+    artist: A user-input string containing an artist name
+  Returns:
+     A dict of the track options to provide the user
+  """
+  try:
+      track_opts = dict()
+      for song in itunespy.search_track(artist):
+        if song.artist_name not in track_opts.keys():
+          track_opts[song.track_name] = song
+        if len(track_opts) >= 10:
+          return track_opts
+      return track_opts
+  except LookupError as err:
+    if exit_fail:
+      logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+' %s', err)
+      sys.exit()
+
+def get_collection_tracks(artist, collection):
+  """
+  Retrieves tracks matching the specified artist and collection from the iTunes API
+  Args:
+    artist: A user-input string containing an artist name
+    collection: A user-input string containing an collection name
+  Returns:
+     A dict of the track options to provide the user
+  """
+  try:
+    track_opts = dict()
+    for album in itunespy.search_album(collection):
+      if artist.lower() == album.artist_name.lower():
+        track_opts = {song.track_name:song for song in album.get_tracks()}
+        break
+    return track_opts
+  except LookupError as err:
+    if exit_fail:
+      logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+' %s', err)
+      sys.exit()
 
 def show_progressbar(status):
   """
