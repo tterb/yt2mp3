@@ -1,0 +1,6 @@
+# Additional pip requirements file for development dependencies.
+
+pytest>=3.6.0
+# TODO: Remove the pinning of the pytest-cov version again once issue
+#       https://github.com/z4r/python-coveralls/issues/66 is resolved.
+pytest-cov>=2.4.0,<2.7
