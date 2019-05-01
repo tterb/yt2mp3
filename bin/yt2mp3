@@ -11,7 +11,7 @@ Brett Stevenson (c) 2018
 import sys, logging
 from collections import defaultdict
 from colorama import init, Fore, Style
-from yt2mp3 import util, opts
+from yt2mp3 import opts, util, video
 from yt2mp3.song import Song
 
 def main(args):
@@ -26,7 +26,7 @@ def main(args):
     if args.playlist:
       url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
       if not util.validate_url(url, bool(args.playlist)):
-        logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
+        logging.warning(f'{Fore.RED}✘{Style.RESET_ALL} Unable to validate the provided URL')
         sys.exit()
       queue = util.get_video_list(url)
     elif args.url:
@@ -34,7 +34,7 @@ def main(args):
       if len(data['video_url']) == 11:
         data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
       if not util.validate_url(data['video_url']):
-        logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
+        logging.warning(f'{Fore.RED}✘{Style.RESET_ALL} Unable to validate the provided URL')
         sys.exit()
     else:
       # Get song track/artist from user
@@ -50,12 +50,12 @@ def main(args):
       queue.append(data['video_url'])
     for i,url in enumerate(queue):
       if args.playlist:
-        title = util.get_video_title(url)
+        title = video.get_title(url)
         logging.info('%s of %s: %s', (i+1), len(queue), title)
         data['video_url'] = url
       song = Song(util.get_song_data(data, args.collection))
       if not args.overwrite and song.file_exists():
-        logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'This song already exists in the output directory')
+        logging.warning(f'{Fore.RED}✘{Style.RESET_ALL} This song already exists in the output directory')
         if args.playlist:
           continue
         sys.exit()
@@ -65,10 +65,10 @@ def main(args):
   # Catch program exit and `ctrl+c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
     util.cleanup()
-    logging.info('\n'+Fore.RED+'✘ '+Style.RESET_ALL+'Cancelled')
+    logging.info(f'{Fore.RED}✘{Style.RESET_ALL} Cancelled')
     sys.exit()
   util.cleanup()
-  logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Done')
+  logging.info(f'{Fore.GREEN}✔{Style.RESET_ALL} Done')
 
 
 if __name__ == '__main__':
