@@ -47,7 +47,7 @@ def get_data(data, exit_fail=True):
       return song
   except LookupError as err:
     if exit_fail:
-      logging.warning(f'{Fore.RED}✘{Style.RESET_ALL} \'{err}\'')
+      logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+err)
       sys.exit()
 
 

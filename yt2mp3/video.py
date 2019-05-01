@@ -24,7 +24,7 @@ def get_url(data, collection=False):
     The URL of a YouTube video matching the provided values
   """
   query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
-  url = f'https://www.youtube.com/results?search_query={query}'
+  url = 'https://www.youtube.com/results?search_query='+query
   req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
   response = urlopen(req, context=ssl.create_default_context())
   soup = BeautifulSoup(response.read(), 'lxml')

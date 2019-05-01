@@ -87,7 +87,7 @@ def show_progressbar(status):
   progress = int(50*(status['downloaded_bytes']/status['total_bytes']))
   percent = ('{0:.1f}').format(progress*2)
   bar = '▓'*progress+'-'*(50 - progress)
-  sys.stdout.write(Fore.YELLOW+'{Fore.YELLOW}↳'+Style.RESET_ALL+' |{bar}| {percent}%\r'.format(bar=bar, percent=percent))
+  sys.stdout.write(Fore.YELLOW+'↳'+Style.RESET_ALL+' |{bar}| {percent}%\r'.format(bar=bar, percent=percent))
   sys.stdout.flush()
   if status['status'] == 'finished':
     logging.info('')
