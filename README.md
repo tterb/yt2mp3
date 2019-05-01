@@ -4,7 +4,7 @@
   <!-- CI Status -->
   <a href="https://travis-ci.org/tterb/yt2mp3"><img src="https://travis-ci.org/tterb/yt2mp3.svg?branch=master" alt="Build Status"/></a>
   <!-- Docs Status -->
-  <a href='https://yt2mp3.readthedocs.io/en/latest/?badge=latest'><img src='https://readthedocs.org/projects/yt2mp3/badge/?version=latest' alt='Documentation Status'/></a>
+  <a href="https://yt2mp3.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/yt2mp3/badge/?version=latest" alt="Documentation Status"/></a>
   <!-- CodeCov -->
   <a href="https://codecov.io/gh/tterb/yt2mp3"><img src="https://codecov.io/gh/tterb/yt2mp3/branch/master/graph/badge.svg"/></a>
   <!--Project version-->
@@ -40,7 +40,7 @@ $ pip install yt2mp3
 ```
 
 ## Usage  
-The program can be executed via the as follows:  
+The program can be executed as shown:  
 ```sh
 $ yt2mp3 [-options]
 ```
