@@ -4,14 +4,14 @@ yt2mp3
 A program that simplifies the process of searching, downloading and 
 converting Youtube videos to MP3 files with embedded metadata via the 
 iTunes API.
-yt2mp3/tests/test_yt2mp3.py
+tests/test_yt2mp3.py
 Brett Stevenson (c) 2018
 """
 
 import os, pytest
 from mutagen.id3 import ID3
 from collections import defaultdict, deque
-from yt2mp3 import util, opts
+from yt2mp3 import itunes, opts, util, video
 from yt2mp3.song import Song
 
 @pytest.fixture
@@ -25,9 +25,9 @@ def test_data():
 
 @pytest.fixture
 def test_song():
-    data = util.get_itunes_data({ 'track_name':'Have a Cigar', 
+    data = itunes.get_data({ 'track_name':'Have a Cigar', 
     'artist_name':'Pink Floyd', 'track_time':308000}).__dict__
-    data['video_url'] = util.get_video_url(data)
+    data['video_url'] = video.get_url(data)
     return Song(data)
 
 def multiple_inputs(inputs):
@@ -64,7 +64,7 @@ def test_get_song_collection_data(test_data):
     data = defaultdict(str, util.get_song_data(input))
     assert [test_data[key] == data[key] for key in test_data.keys()]
     input['collection_name'] = 'live'
-    assert not util.get_itunes_data(input, False)
+    assert not itunes.get_data(input, False)
     
     
 def test_itunes_data(test_data):    
@@ -80,35 +80,42 @@ def test_itunes_data(test_data):
 def test_itunes_data_failure():
     fail_data = { 'track_name':'nomatch', 'artist_name':'test' }
     with pytest.raises(SystemExit) as err:
-        util.get_itunes_data(fail_data)
+        itunes.get_data(fail_data)
     assert err.type == SystemExit
 
 def test_get_video_url(test_data, test_song):
-    url = util.get_video_url(test_data)
-    assert url == test_song.video_url and util.validate_url(url)
+    url = video.get_url(test_data)
+    assert url == test_song.video_url and video.validate_url(url)
 
-def test_validate_url():
+def test_url_validation():
     errors = []
-    urls = ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'http://youtu.be/gkJhnDkdC-0']
-    playlists = ['https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm','https://www.youtube.com/watch?v=gkJhnDkdC-0&list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm', 'https://www.youtube.com/watch?list=PL1F9CA2A03CF286C2&v=pFS4zYWxzNA&']
-    for url in urls:
-        if not util.validate_url(url):
-            errors.append('Failed URL Validation: '+url) 
+    videos = [
+        'https://www.youtube.com/watch?v=C0DPdy98e4c',
+        'http://youtu.be/C0DPdy98e4c'
+    ]
+    playlists = [
+        'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm',
+        'https://www.youtube.com/watch?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm&v=C0DPdy98e4c',
+        'https://www.youtube.com/watch?v=C0DPdy98e4c&list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
+    ]
+    for url in videos:
+        if not video.validate_url(url):
+            errors.append('Failed URL Validation: '+url)
     for url in playlists:
-        if not util.validate_url(url, playlist=True):
-            errors.append('URL Validation: '+url)
+        if not video.validate_url(url, playlist=True):
+            errors.append('Failed URL Validation: '+url)
     assert not errors, 'errors occured:\n{}'.format('\n'.join(errors))
 
 def test_video_title_data(test_data):
     url = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
-    title = util.get_video_title(url)
-    data = util.get_video_data(title).__dict__
+    title = video.get_title(url)
+    data = video.get_data(title).__dict__
     assert [test_data[key] == data[key] for key in test_data.keys()]
 
 def test_video_metadata(test_data):
     errors = []
     url = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
-    meta = util.get_video_metadata(url)
+    meta = video.get_metadata(url)
     assert test_data['track_name'].lower() in meta['song'].lower()
     assert test_data['artist_name'].lower() in meta['artist'].lower()
     assert test_data['collection_name'].lower() in meta['album'].lower()
@@ -159,7 +166,7 @@ def test_set_id3_tags(test_song):
 def test_get_playlist_videos():
     url = 'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
     videos = util.get_video_list(url)
-    assert videos == ['https://www.youtube.com/watch?v=gkJhnDkdC-0', 'https://www.youtube.com/watch?v=_FrOQC-zEog', 'https://www.youtube.com/watch?v=yvPr9YV7-Xw']
+    assert videos == ['https://www.youtube.com/watch?v=C0DPdy98e4c', 'https://www.youtube.com/watch?v=_FrOQC-zEog', 'https://www.youtube.com/watch?v=yvPr9YV7-Xw']
 
 # Make sure temporary files are being cleaned up
 def test_cleanup(test_song):
