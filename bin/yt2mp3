@@ -25,7 +25,7 @@ def main(args):
   try:
     if args.playlist:
       url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-      if not util.validate_url(url, bool(args.playlist)):
+      if not video.validate_url(url, bool(args.playlist)):
         logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
         sys.exit()
       queue = util.get_video_list(url)
@@ -33,7 +33,7 @@ def main(args):
       data['video_url'] = args.url
       if len(data['video_url']) == 11:
         data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
-      if not util.validate_url(data['video_url']):
+      if not video.validate_url(data['video_url']):
         logging.warning(Fore.RED+'✘ '+Style.RESET_AL+'Unable to validate the provided URL')
         sys.exit()
     else:
@@ -55,12 +55,12 @@ def main(args):
         data['video_url'] = url
       song = Song(util.get_song_data(data, args.collection))
       if not args.overwrite and song.file_exists():
-        logging.warning(Fore.RED+'✘ '+Style.RESET_AL+'This song already exists in the output directory')
+        logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'This song already exists in the output directory')
         if args.playlist:
           continue
         sys.exit()
-      video = song.download(args.verbose)
-      path = song.convert_to_mp3(video)
+      videoFile = song.download(args.verbose)
+      path = song.convert_to_mp3(videoFile)
       song.set_id3(path, args.resolution)
   # Catch program exit and `ctrl+c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
