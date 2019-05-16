@@ -42,20 +42,13 @@ tests/**/*
 tox.ini
 .coverage
 
-# Other
-README/
-TODO.md
-NOTES.md
-yt2mp3.py
-docs/code_of_conduct.rst
-docs/images/*_.*
-stats.py
-downloads.md
-
-in.txt
-lxml.*
-test.py
-test2.py
-test3.py
-
 .pylintrc
+
+README/*
+docs/images/*_*
+downloads.md
+in.txt
+stats.py
+version.py
+NOTES.md
+TODO.md
