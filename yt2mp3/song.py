@@ -68,6 +68,7 @@ class Song():
     path = os.path.join(temp_dir, video_id+'.'+video_info['ext'])
     return path
 
+
   def convert_to_mp3(self, video):
     """
     Converts the downloaded video file to MP3
@@ -82,11 +83,13 @@ class Song():
     if not os.path.exists(artist_dir):
       os.makedirs(artist_dir)
     song_path = os.path.join(artist_dir, self.filename+'.mp3')
+    # TODO: Write test to cover
     if os.path.exists(song_path):
       self.filename = self.filename+' ('+self.album+')'
       song_path = os.path.join(artist_dir, self.filename+'.mp3')
     pydub.AudioSegment.from_file(video).export(song_path, format='mp3')
     return song_path
+
 
   def get_cover_image(self, resolution):
     """
@@ -107,6 +110,7 @@ class Song():
     response = requests.get(img_url)
     Image.open(io.BytesIO(response.content)).save(img_path)
     return img_path
+
 
   def set_id3(self, path, resolution=480):
     """
@@ -130,6 +134,7 @@ class Song():
     tags.add(APIC(encoding=3, mime='image/jpg', type=3,
                   desc=u'Cover', data=open(img_path, 'rb').read()))
     tags.save()
+
 
   def file_exists(self):
     """
