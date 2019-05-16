@@ -65,7 +65,7 @@ def main(args):
   # Catch program exit and `ctrl+c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
     util.cleanup()
-    logging.info(Fore.RED+'✘ '+Style.RESET_AL+'Cancelled')
+    logging.info(Fore.RED+'✘ '+Style.RESET_ALL+'Cancelled')
     sys.exit()
   util.cleanup()
   logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Done')
