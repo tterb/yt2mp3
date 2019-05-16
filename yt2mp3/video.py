@@ -12,7 +12,7 @@ import sys, re, youtube_dl, urllib, ssl, string
 from urllib.request import Request, urlopen
 from collections import defaultdict
 from bs4 import BeautifulSoup
-from yt2mp3 import itunes
+from yt2mp3 import itunes, errors
 
 def get_url(data, collection=False):
   """
@@ -35,7 +35,7 @@ def get_url(data, collection=False):
       # Check that video time is similar to the track time
       if 'track_time' in data.keys():
         target = data['track_time']//1000
-        vid_time = youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['duration']
+        vid_time = get_duration(url)
         if abs(target-vid_time) < 20:
           if collection:
             video_data = defaultdict(str, get_metadata(url))
@@ -74,10 +74,25 @@ def get_title(url):
   Args:
     url: A YouTube video URL
   Returns:
+    A string containing the duration of the provided YouTube video
+  """
+  try:
+    return youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['title']
+  except Exception as e:
+    errors.handle_error(e)
+
+def get_duration(url):
+  """
+  Retrieves the duration of the provided YouTube video
+  Args:
+    url: A YouTube video URL
+  Returns:
     A string containing the title of the provided YouTube video
   """
-  return youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['title']
-
+  try:
+    return youtube_dl.YoutubeDL({'quiet': True}).extract_info(url, download=False)['duration']
+  except Exception as e:
+    errors.handle_error(e)
 
 def get_metadata(url):
   """
