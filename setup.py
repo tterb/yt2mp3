@@ -25,6 +25,7 @@ setuptools.setup(
     'itunespy==1.5.5',
     'lxml>=4.2.5',
     'mutagen==1.42.0',
+    'packaging>=19.0',
     'Pillow>=5.3.0',
     'pydub==0.23.1',
     'requests>=2.21.0',
