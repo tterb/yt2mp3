@@ -36,7 +36,7 @@ def get_url(data, collection=False):
       if 'track_time' in data.keys():
         target = data['track_time']//1000
         vid_time = get_duration(url)
-        if abs(target-vid_time) < 20:
+        if abs(target - vid_time) < 20:
           if collection:
             video_data = defaultdict(str, get_metadata(url))
             if data['collection_name'].lower() in video_data['album'].lower():
@@ -51,17 +51,18 @@ def get_url(data, collection=False):
       return url
 
 
-def get_data(title):
+def get_keyword_data(title):
   """
-  Attempts to retrieve song data from the video title
+  Attempts to retrieve song data from the video title keywords
   Args:
     title: A string containing the title of the YouTube video
   Returns:
-    A dict of song data if a match is found using the iTunes APi
+    A dict of song data if a match is found using the iTunes API
   """
-  # Remove parenthesis, punctuation and nondescript words
+  # Remove punctuation and nondescript words
   pattern = r'\([^)]*\)|\[[^]]*\]|ft(\.)?|feat(\.)?|\blyrics?\b|official|video|audio|h(d|q)'
   keywords = re.sub(pattern, '', str(title), flags=re.I)
+  # Remove punctuation
   keywords = keywords.translate(str.maketrans('', '', string.punctuation))
   keywords = ' '.join(keywords.split())
   # Query iTunes API

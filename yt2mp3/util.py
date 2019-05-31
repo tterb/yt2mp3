@@ -18,14 +18,14 @@ def get_song_data(data, collection=False):
   """
   Employs a variety of methods for retrieving song data for the provided input
   Args:
-    data: A dict of values provided by the user
+    data: A defaultdict of values provided by the user
     collection: A boolean representing whether an album has been specified
   Returns:
     A dict of the retrieved song data
   """
   if data['video_url']:
     url = data['video_url']
-    result = video.get_data(video.get_title(url))
+    result = video.get_keyword_data(video.get_title(url))
     if not result:
       data['track_name'] = input(' Track: ')
       data['artist_name'] = input(' Artist: ')
@@ -50,7 +50,7 @@ def get_song_data(data, collection=False):
     data['video_url'] = video.get_url(data, collection)
   return data
 
-
+# TODO: Move to `yt2mp3/video.py`?
 def get_video_list(url):
   """
   Retrieves a list of video URL's from the playlist URL

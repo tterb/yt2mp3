@@ -1,7 +1,7 @@
 import sys, json, logging, requests, importlib_metadata
 from packaging import version
 from colorama import Fore, Style
-from yt2mp3 import util
+import yt2mp3
 
 def handle_error(exception):
   """
@@ -16,7 +16,7 @@ def handle_error(exception):
     if local_ver != pkg_ver:
       msg = 'This error is likely caused by an outdated version of '+pkg+'.\nYou are using version '+str(local_ver)+', however version '+str(pkg_ver)+' is available. You can upgrade the package with the \'pip install --upgrade '+pkg+'\' command.'
       logging.warning('\n'+Fore.YELLOW+'✘ '+msg+Style.RESET_ALL)
-  util.cleanup()
+  yt2mp3.util.cleanup()
   sys.exit()
 
 
