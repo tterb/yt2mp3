@@ -8,10 +8,10 @@ tests/test_yt2mp3.py
 Brett Stevenson (c) 2018
 """
 
-import os, pytest
-from mutagen.id3 import ID3
+import os, pytest, youtube_dl
 from collections import defaultdict, deque
-from yt2mp3 import itunes, opts, util, video
+from mutagen.id3 import ID3
+from yt2mp3 import itunes, opts, util, video, errors
 from yt2mp3.song import Song
 
 @pytest.fixture
@@ -65,8 +65,8 @@ def test_get_song_collection_data(test_data):
     assert [test_data[key] == data[key] for key in test_data.keys()]
     input['collection_name'] = 'live'
     assert not itunes.get_data(input, False)
-    
-    
+
+
 def test_itunes_data(test_data):    
     data, results = defaultdict(str), dict()
     data['track_name'] = 'have a cigar'
@@ -109,7 +109,7 @@ def test_url_validation():
 def test_video_title_data(test_data):
     url = 'https://www.youtube.com/watch?v=hMr3KtYUCcI'
     title = video.get_title(url)
-    data = video.get_data(title).__dict__
+    data = video.get_keyword_data(title).__dict__
     assert [test_data[key] == data[key] for key in test_data.keys()]
 
 def test_video_metadata(test_data):
@@ -167,7 +167,7 @@ def test_get_playlist_videos():
     url = 'https://www.youtube.com/playlist?list=PLGqB3S8f_uiLkCQziivGYI3zNtLJvfUWm'
     videos = util.get_video_list(url)
     assert videos == ['https://www.youtube.com/watch?v=C0DPdy98e4c', 'https://www.youtube.com/watch?v=_FrOQC-zEog', 'https://www.youtube.com/watch?v=yvPr9YV7-Xw']
-
+    
 # Make sure temporary files are being cleaned up
 def test_cleanup(test_song):
     errors = []
@@ -186,3 +186,16 @@ def test_cleanup(test_song):
     if os.path.isdir(cover_dir):
         errors.append('The temporary cover-art files weren\'t cleaned up')
     assert not errors, 'errors occured:\n{}'.format('\n'.join(errors))
+
+def test_error_logging(caplog):
+    exception = youtube_dl.utils.DownloadError;
+    # captured = capsys.readouterr()
+    with pytest.raises(SystemExit) as exit:
+        errors.handle_error(exception)
+#     assert 'This error is likely caused by an outdated version of youtube_dl.\n' in caplog.text
+
+def test_compare_package_versions():
+    pkg = 'youtube_dl'
+    local_ver = errors.get_local_version(pkg)
+    pkg_ver = errors.get_latest_release(pkg)
+    assert local_ver == pkg_ver
