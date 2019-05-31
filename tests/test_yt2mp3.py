@@ -194,8 +194,8 @@ def test_error_logging(caplog):
         errors.handle_error(exception)
 #     assert 'This error is likely caused by an outdated version of youtube_dl.\n' in caplog.text
 
-def test_compare_package_versions():
-    pkg = 'youtube_dl'
-    local_ver = errors.get_local_version(pkg)
-    pkg_ver = errors.get_latest_release(pkg)
-    assert local_ver == pkg_ver
+# def test_compare_package_versions():
+#     pkg = 'youtube_dl'
+#     local_ver = errors.get_local_version(pkg)
+#     pkg_ver = errors.get_latest_release(pkg)
+#     assert local_ver == pkg_ver
