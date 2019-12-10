@@ -24,8 +24,8 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install ffmpeg --with-libvorbis --with-sdl2 --with-theora; fi
 install:
-  - pip install --user -r dev-requirements.txt
-  - pip install --user -r requirements.txt
+  - pip install -r dev-requirements.txt
+  - pip install -r requirements.txt
   - pip install -e .
 script:
   - python3 setup.py test
