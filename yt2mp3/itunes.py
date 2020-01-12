@@ -8,8 +8,7 @@ yt2mp3/itunes.py
 Brett Stevenson (c) 2018
 """
 
-import sys, os, itunespy, logging
-from collections import defaultdict
+import sys, itunespy, logging
 from colorama import Fore, Style
 
 

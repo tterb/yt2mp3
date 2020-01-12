@@ -26,18 +26,18 @@ class Song():
     the iTunes API
   """
   def __init__(self, data):
-    self.track = data['track_name']
-    self.artist = data['artist_name']
-    self.album = data['collection_name']
-    self.genre = data['primary_genre_name']
-    self.artwork_url = data['artwork_url_100']
+    self.track        = data['track_name']
+    self.artist       = data['artist_name']
+    self.album        = data['collection_name']
+    self.genre        = data['primary_genre_name']
+    self.artwork_url  = data['artwork_url_100']
     self.track_number = str(data['track_number'])
-    self.track_count = str(data['track_count'])
-    self.disc_count = str(data['disc_count'])
-    self.disc_number = str(data['disc_number'])
+    self.track_count  = str(data['track_count'])
+    self.disc_count   = str(data['disc_count'])
+    self.disc_number  = str(data['disc_number'])
     self.release_date = data['release_date']
-    self.filename = data['track_name']
-    self.video_url = data['video_url']
+    self.filename     = data['track_name']
+    self.video_url    = data['video_url']
 
 
   def download(self, verbose=False):

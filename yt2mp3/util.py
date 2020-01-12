@@ -14,6 +14,22 @@ from colorama import Fore, Style
 from yt2mp3 import itunes, video
 
 
+def resolve_video_url(code, playlist=False):
+  """
+  Attempts to use the provided video code to create a valid video URL
+  Args:
+    code: A user-input video code string
+  Returns:
+    A valid video URL from the provided code
+  """
+  url = 'https://www.youtube.com/watch?v='+code
+  if playlist:
+    url = 'https://www.youtube.com/playlist?list='+code
+  if not video.validate_url(url, playlist):
+    logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
+    sys.exit()
+  return url
+
 def get_song_data(data, collection=False):
   """
   Employs a variety of methods for retrieving song data for the provided input

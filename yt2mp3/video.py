@@ -8,8 +8,7 @@ yt2mp3/video.py
 Brett Stevenson (c) 2018
 """
 
-import sys, re, youtube_dl, urllib, ssl, string
-from urllib.request import Request, urlopen
+import re, youtube_dl, urllib, ssl, string
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from yt2mp3 import itunes
@@ -25,10 +24,9 @@ def get_url(data, collection=False):
   """
   query = urllib.parse.quote(data['track_name']+' '+data['artist_name'])
   url = 'https://www.youtube.com/results?search_query='+query
-  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  response = urlopen(req, context=ssl.create_default_context())
+  req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urllib.request.urlopen(req, context=ssl.create_default_context())
   soup = BeautifulSoup(response.read(), 'lxml')
-  results = list()
   for vid in soup.findAll(attrs={'class':'yt-uix-tile-link'}):
     url = 'https://www.youtube.com' + vid['href']
     if validate_url(url):
@@ -87,8 +85,8 @@ def get_metadata(url):
   Returns:
     A dict of the retrieved song data
   """
-  req = Request(url, headers={'User-Agent':'Mozilla/5.0'})
-  response = urlopen(req, context=ssl.create_default_context())
+  req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0'})
+  response = urllib.request.urlopen(req, context=ssl.create_default_context())
   soup = BeautifulSoup(response.read(), 'lxml')
   section = soup.find('ul', attrs={'class': 'watch-extras-section'})
   video_data = {}

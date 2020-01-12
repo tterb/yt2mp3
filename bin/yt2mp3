@@ -24,18 +24,13 @@ def main(args):
   data = defaultdict(str)
   try:
     if args.playlist:
-      url = 'https://www.youtube.com/playlist?list='+args.playlist.split('list=')[-1]
-      if not video.validate_url(url, bool(args.playlist)):
-        logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'Unable to validate the provided URL')
-        sys.exit()
+      code = args.playlist.split('list=')[-1]
+      url = util.resolve_video_url(code, args.playlist)
       queue = util.get_video_list(url)
     elif args.url:
-      data['video_url'] = args.url
-      if len(data['video_url']) == 11:
-        data['video_url'] = 'https://www.youtube.com/watch?v='+data['video_url']
-      if not video.validate_url(data['video_url']):
-        logging.warning(Fore.RED+'✘ '+Style.RESET_AL+'Unable to validate the provided URL')
-        sys.exit()
+      code = args.url.split('?v=')[-1]
+      url = util.resolve_video_url(code)
+      queue = [url]
     else:
       # Get song track/artist from user
       if args.track or args.artist:
@@ -46,26 +41,25 @@ def main(args):
         data['artist_name'] = input(' Artist: ')
         if args.collection:
           data['collection_name'] = input(' Album: ')
-    if not args.playlist:
-      queue.append(data['video_url'])
-    for i,url in enumerate(queue):
+
+    for i, url in enumerate(queue):
+      title = video.get_title(url)
+      data['video_url'] = url
       if args.playlist:
-        title = video.get_title(url)
         logging.info('%s of %s: %s', (i+1), len(queue), title)
-        data['video_url'] = url
       song = Song(util.get_song_data(data, args.collection))
       if not args.overwrite and song.file_exists():
         logging.warning(Fore.RED+'✘ '+Style.RESET_ALL+'This song already exists in the output directory')
         if args.playlist:
           continue
         sys.exit()
-      videoFile = song.download(args.verbose)
-      path = song.convert_to_mp3(videoFile)
+      video_file = song.download(args.verbose)
+      path = song.convert_to_mp3(video_file)
       song.set_id3(path, args.resolution)
-  # Catch program exit and `ctrl+c` to clean-up temporary files
+  # Catch program exit and `ctrl + c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
     util.cleanup()
-    logging.info(Fore.RED+'✘ '+Style.RESET_AL+'Cancelled')
+    logging.info(Fore.RED+'✘ '+Style.RESET_ALL+'Cancelled')
     sys.exit()
   util.cleanup()
   logging.info(Fore.GREEN+'✔ '+Style.RESET_ALL+'Done')
