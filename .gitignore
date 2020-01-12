@@ -42,8 +42,6 @@ tests/**/*
 tox.ini
 .coverage
 
-.pylintrc
-
 README/*
 docs/images/*_*
 downloads.md
