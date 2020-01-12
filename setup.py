@@ -22,6 +22,7 @@ setuptools.setup(
     'beautifulsoup4>=4.6.3',
     'colorama==0.4.1',
     'curses_menu>=0.5.0',
+    'google-music-scripts>=4.2.0',
     'itunespy==1.5.5',
     'lxml>=4.2.5',
     'mutagen==1.42.0',

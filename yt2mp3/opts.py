@@ -24,6 +24,7 @@ def parse_options(args):
   parser.add_argument('-a', '--artist', nargs='+', help='specify the artist name query', default='')
   parser.add_argument('-c', '--collection', action='store_true', help='specify the album name query')
   parser.add_argument('-u', '--url', help='specify the YouTube URL/ID of the video to convert')
+  parser.add_argument('--upload', action='store_true', help='upload the downloaded mp3 to Google Play Music')
   parser.add_argument('-p', '--playlist', help='specify the YouTube URL/ID of the playlist to convert')
   parser.add_argument('-r', '--resolution', type=int, help='specify the resolution for the cover-art image', default=480)
   parser.add_argument('-o', '--overwrite', action='store_true', help='overwrite file if one exists in output directory')

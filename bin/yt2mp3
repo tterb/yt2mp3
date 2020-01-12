@@ -8,7 +8,7 @@ bin/yt2mp3
 Brett Stevenson (c) 2018
 """
 
-import sys, logging
+import sys, logging, subprocess
 from collections import defaultdict
 from colorama import init, Fore, Style
 from yt2mp3 import opts, util, video
@@ -62,6 +62,12 @@ def main(args):
       videoFile = song.download(args.verbose)
       path = song.convert_to_mp3(videoFile)
       song.set_id3(path, args.resolution)
+
+      if args.upload:
+        logging.warning(Fore.MAGENTA+'↑ '+Style.RESET_ALL+'Uploading mp3 to Google Play Music')
+        logging.info('path: '+str(path))
+        subprocess.run(['gms', 'upload', path])
+
   # Catch program exit and `ctrl+c` to clean-up temporary files
   except (KeyboardInterrupt, SystemExit):
     util.cleanup()
