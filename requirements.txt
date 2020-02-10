@@ -3,7 +3,7 @@ colorama==0.4.3
 curses_menu>=0.5.0
 itunespy==1.5.5
 lxml>=4.2.5
-mutagen==1.42.0
+mutagen==1.44.0
 Pillow==6.2.1
 pydub==0.23.1
 requests>=2.21.0
