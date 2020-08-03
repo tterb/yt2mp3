@@ -22,7 +22,7 @@ setuptools.setup(
     'beautifulsoup4>=4.6.3',
     'colorama==0.4.1',
     'curses_menu>=0.5.0',
-    'itunespy==1.5.5',
+    'itunespy==1.6.0',
     'lxml>=4.2.5',
     'mutagen==1.45.1',
     'Pillow>=5.3.0',
